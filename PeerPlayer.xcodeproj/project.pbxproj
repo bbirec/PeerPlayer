@@ -11,7 +11,25 @@
 		CD0C46281C67475D003910DF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0C46271C67475D003910DF /* main.m */; };
 		CD0C462A1C67475D003910DF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD0C46291C67475D003910DF /* Assets.xcassets */; };
 		CD0C462D1C67475D003910DF /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD0C462B1C67475D003910DF /* MainMenu.xib */; };
+		CD0C46541C67C32B003910DF /* go-peerflix in Resources */ = {isa = PBXBuildFile; fileRef = CD0C46531C67C32B003910DF /* go-peerflix */; };
+		CD0C46551C67C330003910DF /* go-peerflix in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD0C46531C67C32B003910DF /* go-peerflix */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CD791E431C6887300098F7C3 /* ZMQContext.m in Sources */ = {isa = PBXBuildFile; fileRef = CD791E3D1C6887300098F7C3 /* ZMQContext.m */; };
+		CD791E441C6887300098F7C3 /* ZMQException.m in Sources */ = {isa = PBXBuildFile; fileRef = CD791E3F1C6887300098F7C3 /* ZMQException.m */; };
+		CD791E451C6887300098F7C3 /* ZMQSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CD791E421C6887300098F7C3 /* ZMQSocket.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CD0C46521C67C312003910DF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				CD0C46551C67C330003910DF /* go-peerflix in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		CD0C46201C67475D003910DF /* PeerPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PeerPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -21,6 +39,14 @@
 		CD0C46291C67475D003910DF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CD0C462C1C67475D003910DF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		CD0C462E1C67475D003910DF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CD0C46531C67C32B003910DF /* go-peerflix */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "go-peerflix"; sourceTree = "<group>"; };
+		CD791E3C1C6887300098F7C3 /* ZMQContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQContext.h; sourceTree = "<group>"; };
+		CD791E3D1C6887300098F7C3 /* ZMQContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMQContext.m; sourceTree = "<group>"; };
+		CD791E3E1C6887300098F7C3 /* ZMQException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQException.h; sourceTree = "<group>"; };
+		CD791E3F1C6887300098F7C3 /* ZMQException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMQException.m; sourceTree = "<group>"; };
+		CD791E401C6887300098F7C3 /* ZMQObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQObjC.h; sourceTree = "<group>"; };
+		CD791E411C6887300098F7C3 /* ZMQSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQSocket.h; sourceTree = "<group>"; };
+		CD791E421C6887300098F7C3 /* ZMQSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMQSocket.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +63,8 @@
 		CD0C46171C67475D003910DF = {
 			isa = PBXGroup;
 			children = (
+				CD791E3B1C6887300098F7C3 /* objc-zmq */,
+				CD0C46531C67C32B003910DF /* go-peerflix */,
 				CD0C46221C67475D003910DF /* PeerPlayer */,
 				CD0C46211C67475D003910DF /* Products */,
 			);
@@ -71,6 +99,20 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		CD791E3B1C6887300098F7C3 /* objc-zmq */ = {
+			isa = PBXGroup;
+			children = (
+				CD791E3C1C6887300098F7C3 /* ZMQContext.h */,
+				CD791E3D1C6887300098F7C3 /* ZMQContext.m */,
+				CD791E3E1C6887300098F7C3 /* ZMQException.h */,
+				CD791E3F1C6887300098F7C3 /* ZMQException.m */,
+				CD791E401C6887300098F7C3 /* ZMQObjC.h */,
+				CD791E411C6887300098F7C3 /* ZMQSocket.h */,
+				CD791E421C6887300098F7C3 /* ZMQSocket.m */,
+			);
+			path = "objc-zmq";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -81,6 +123,7 @@
 				CD0C461C1C67475D003910DF /* Sources */,
 				CD0C461D1C67475D003910DF /* Frameworks */,
 				CD0C461E1C67475D003910DF /* Resources */,
+				CD0C46521C67C312003910DF /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -130,6 +173,7 @@
 			files = (
 				CD0C462A1C67475D003910DF /* Assets.xcassets in Resources */,
 				CD0C462D1C67475D003910DF /* MainMenu.xib in Resources */,
+				CD0C46541C67C32B003910DF /* go-peerflix in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,8 +184,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD791E441C6887300098F7C3 /* ZMQException.m in Sources */,
+				CD791E431C6887300098F7C3 /* ZMQContext.m in Sources */,
 				CD0C46281C67475D003910DF /* main.m in Sources */,
 				CD0C46251C67475D003910DF /* AppDelegate.m in Sources */,
+				CD791E451C6887300098F7C3 /* ZMQSocket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,8 +290,21 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/usr/local/Cellar/zeromq405/4.0.5/include,
+				);
 				INFOPLIST_FILE = PeerPlayer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/lib,
+					/usr/local/Cellar/zeromq405/4.0.5/lib,
+				);
+				OTHER_LDFLAGS = (
+					"-lmpv",
+					"-lzmq",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.hackerstalk.peerplayer.PeerPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -255,8 +315,21 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/usr/local/Cellar/zeromq405/4.0.5/include,
+				);
 				INFOPLIST_FILE = PeerPlayer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/lib,
+					/usr/local/Cellar/zeromq405/4.0.5/lib,
+				);
+				OTHER_LDFLAGS = (
+					"-lmpv",
+					"-lzmq",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.hackerstalk.peerplayer.PeerPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -281,6 +354,7 @@
 				CD0C46331C67475D003910DF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

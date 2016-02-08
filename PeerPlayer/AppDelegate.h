@@ -8,8 +8,19 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface AppDelegate : NSObject <NSApplicationDelegate>
+#include <mpv/client.h>
+#import "ZMQObjC.h"
 
+@interface AppDelegate : NSObject <NSApplicationDelegate>{
+    mpv_handle *mpv;
+    dispatch_queue_t queue;
+    ZMQContext *ctx;
+    
+    NSTask *task;
+}
+
+@property (strong) NSWindow *window;
+@property (strong) NSView* wrapper;
 
 @end
 
