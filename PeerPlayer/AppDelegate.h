@@ -8,25 +8,18 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include <mpv/client.h>
-#import "SRWebSocket.h"
+#import "MpvController.h"
 
-@interface AppDelegate : NSObject <NSApplicationDelegate, SRWebSocketDelegate>{
-    mpv_handle *mpv;
-    dispatch_queue_t queue;
-    
-    NSTask *task;
-    NSThread *thread;
-}
+#import "Peerflix.h"
+
+@interface AppDelegate : NSObject <NSApplicationDelegate, PeerflixDelegate>
 
 @property (strong) NSWindow *window;
-@property (strong) NSView* wrapper;
-@property (strong) SRWebSocket* socket;
 
-@property (strong) NSWindow *magnetWindow;
+@property (strong) Peerflix* peerflix;
+@property (strong) MpvController* mpv;
 
--(void) play:(NSString*)url;
-
+-(void) playTorrent:(NSString*)url;
 -(IBAction) openTorrentFile:(id)sender;
 
 @end

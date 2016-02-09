@@ -16,7 +16,7 @@
     if([NSApp runModalForWindow:self.panel] == NSFileHandlingPanelOKButton) {
         NSString* url = [self.textField stringValue];
         NSLog(@"url: %@", url);
-        [self.appDelegate play:url];
+        [self.appDelegate playTorrent:url];
     }
 }
 

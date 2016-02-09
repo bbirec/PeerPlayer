@@ -9,17 +9,6 @@
 #import "AppDelegate.h"
 
 
-static inline void check_error(int status)
-{
-    if (status < 0) {
-        printf("mpv API error: %s\n", mpv_error_string(status));
-        exit(1);
-    }
-}
-
-
-static void wakeup(void *);
-
 @interface CocoaWindow : NSWindow
 @end
 
@@ -33,239 +22,38 @@ static void wakeup(void *);
 
 #pragma mark Peerflix
 
-- (void)launchPeerflix {
-    if(task) {
-        [task terminate];
-        task = nil;
-    }
 
-    
-    NSString* execPath = [[NSBundle mainBundle] pathForAuxiliaryExecutable:@"go-peerflix"];
-    NSLog(@"%@", execPath);
-    
-    task = [[NSTask alloc] init];
-    NSPipe* outputPipe = [NSPipe pipe];
-    [task setStandardOutput:outputPipe];
-    [task setLaunchPath:execPath];
-    [task setArguments:	[NSArray arrayWithObjects:@"-port", @"8000", nil]];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(readCompleted:)
-                                                 name:NSFileHandleReadToEndOfFileCompletionNotification object:[outputPipe fileHandleForReading]];
-    [[outputPipe fileHandleForReading] readToEndOfFileInBackgroundAndNotify];
-    
-    [task launch];
+-(void) playTorrent:(NSString*)url {
+    [self.mpv stop];
+    [self.peerflix downloadTorrent:url];
 }
 
--(void) killPeerflix {
-    NSTask *controlTask = [[NSTask alloc] init];
-    controlTask.launchPath = @"/usr/bin/pkill";
-    controlTask.arguments = @[@"go-peerflix"];
-    [controlTask launch];
-}
-
--(NSString*) findVideoFileURL:(NSData*) data {
-    NSError *error = nil;
-    id object = [NSJSONSerialization
-                 JSONObjectWithData:data
-                 options:0
-                 error:&error];
-    
-    if(error) {
-        NSLog(@"JSON data is malformed.");
-        return nil;
-    }
-    
-    if([object isKindOfClass:[NSDictionary class]])
-    {
-        NSDictionary *results = object;
-        
-        // Select the largest file
-        NSInteger maxSize = 0;
-        NSString* targetHash;
-        NSString* filename;
-        NSArray* files = [results objectForKey:@"Files"];
-        for(NSDictionary* dict in files) {
-            NSInteger s = [[dict objectForKey:@"Size"] longValue];
-            NSLog(@"size: %ld", s);
-            if(maxSize < s) {
-                maxSize = s;
-                targetHash = [dict objectForKey:@"Hash"];
-                filename = [dict objectForKey:@"Filename"];
-            }
-        }
-        
-        NSLog(@"Filename: %@", filename);
-        
-        if(targetHash != nil) {
-            return [NSString stringWithFormat:@"http://localhost:8000/?hash=%@", targetHash];
-        }
-        else {
-            return nil;
+-(void) torrentReady:(NSDictionary*)data {
+    // Select the largest file
+    NSInteger maxSize = 0;
+    NSString* targetHash;
+    NSString* filename;
+    NSArray* files = [data objectForKey:@"Files"];
+    for(NSDictionary* dict in files) {
+        NSInteger s = [[dict objectForKey:@"Size"] longValue];
+        NSLog(@"size: %ld", s);
+        if(maxSize < s) {
+            maxSize = s;
+            targetHash = [dict objectForKey:@"Hash"];
+            filename = [dict objectForKey:@"Filename"];
         }
     }
-    else
-    {
-        // JSON data is malformed.
-        NSLog(@"JSON data is malformed.");
-        return nil;
-    }
-}
-
-
-#pragma mark WebSocket
-
--(void) connectWs {
-    // Web socket
-    NSURL* wsUrl = [NSURL URLWithString:@"http://localhost:8000/ws"];
-    self.socket = [[SRWebSocket alloc] initWithURL:wsUrl];
-    self.socket.delegate = self;
-    [self.socket open];
-}
-
-- (void)webSocketDidOpen:(SRWebSocket *)webSocket {
-
-}
-
-- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {
-    NSLog(@"Got ws message:%@", message);
-    NSString* url = [self findVideoFileURL:[message dataUsingEncoding:NSUTF8StringEncoding]];
     
-    if(url != nil) {
-        NSLog(@"Start player with: %@", url);
-        [self startPlayerWithUrl:url];
+    NSLog(@"Filename: %@", filename);
+    
+    if(targetHash != nil) {
+        NSString* url = [NSString stringWithFormat:@"http://localhost:8000/?hash=%@", targetHash];
+        [self.mpv playWithUrl:url];
     }
     else {
-        // TODO:
-        NSLog(@"Not found any file to play");
+        NSLog(@"Nothing to play");
     }
 }
-
-
-- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
-    NSLog(@"%@", error);
-    //TODO : When web socket server could not start. Exponential back off?
-    [NSTimer scheduledTimerWithTimeInterval:.1
-                                     target:self
-                                   selector:@selector(connectWs)
-                                   userInfo:nil
-                                    repeats:NO];
-}
-
--(void) play:(NSString*)url {
-    [self stopPlayer];
-    // TODO: show loading message.
-    
-    //
-    [self.socket send:url];
-}
-
-#pragma -
-#pragma mark MPV
-
--(void) initPlayer {
-    // Deal with MPV in the background.
-    queue = dispatch_queue_create("mpv", DISPATCH_QUEUE_SERIAL);
-    
-    dispatch_async(queue, ^{
-        mpv = mpv_create();
-        if (!mpv) {
-            printf("failed creating context\n");
-            exit(1);
-        }
-        
-        int64_t wid = (intptr_t) self.wrapper;
-        check_error(mpv_set_option(mpv, "wid", MPV_FORMAT_INT64, &wid));
-        
-        // Maybe set some options here, like default key bindings.
-        // NOTE: Interaction with the window seems to be broken for now.
-        check_error(mpv_set_option_string(mpv, "input-default-bindings", "yes"));
-        
-        // for testing!
-        check_error(mpv_set_option_string(mpv, "osc", "yes"));
-        check_error(mpv_set_option_string(mpv, "input-media-keys", "yes"));
-        check_error(mpv_set_option_string(mpv, "input-cursor", "yes"));
-        check_error(mpv_set_option_string(mpv, "input-vo-keyboard", "yes"));
-        
-        // request important errors
-        check_error(mpv_request_log_messages(mpv, "warn"));
-        
-        check_error(mpv_initialize(mpv));
-        
-        // Register to be woken up whenever mpv generates new events.
-        mpv_set_wakeup_callback(mpv, wakeup, (__bridge void *) self);
-    });
-}
-
--(void) startPlayerWithUrl:(NSString*) url {
-    NSLog(@"play url: %@", url);
-    
-    // Deal with MPV in the background.
-    dispatch_async(queue, ^{
-        // Load the indicated file
-        const char *cmd[] = {"loadfile", url.UTF8String, NULL};
-        check_error(mpv_command(mpv, cmd));
-    });
-}
-
--(void) stopPlayer {
-    dispatch_async(queue, ^{
-        const char *cmd[] = {"stop", NULL};
-        check_error(mpv_command(mpv, cmd));
-    });
-}
-
-- (void)readCompleted:(NSNotification *)notification {
-    /*
-     NSLog(@"Read data: %@", [[notification userInfo] objectForKey:NSFileHandleNotificationDataItem]);*/
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleReadToEndOfFileCompletionNotification object:[notification object]];
-}
-
-- (void) handleEvent:(mpv_event *)event
-{
-    switch (event->event_id) {
-        case MPV_EVENT_SHUTDOWN: {
-            mpv_detach_destroy(mpv);
-            mpv = NULL;
-            printf("event: shutdown\n");
-            break;
-        }
-            
-        case MPV_EVENT_LOG_MESSAGE: {
-            struct mpv_event_log_message *msg = (struct mpv_event_log_message *)event->data;
-            printf("[%s] %s: %s", msg->prefix, msg->level, msg->text);
-        }
-            
-        case MPV_EVENT_VIDEO_RECONFIG: {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSArray *subviews = [self.wrapper subviews];
-                if ([subviews count] > 0) {
-                    // mpv's events view
-                    NSView *eview = [self.wrapper subviews][0];
-                    [self.window makeFirstResponder:eview];
-                }
-            });
-        }
-            
-        default:
-            printf("event: %s\n", mpv_event_name(event->event_id));
-    }
-}
-
-
-- (void) readEvents
-{
-    dispatch_async(queue, ^{
-        while (mpv) {
-            mpv_event *event = mpv_wait_event(mpv, 0);
-            if (event->event_id == MPV_EVENT_NONE)
-                break;
-            [self handleEvent:event];
-        }
-    });
-}
-
-#pragma -
 
 #pragma mark App delegate
 
@@ -290,9 +78,12 @@ static void wakeup(void *);
     [self.window setTitleVisibility:NSWindowTitleHidden];
     
     NSRect frame = [[self.window contentView] bounds];
-    self.wrapper = [[NSView alloc] initWithFrame:frame];
-    [self.wrapper setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-    [[self.window contentView] addSubview:self.wrapper];
+    NSView* wrapper = [[NSView alloc] initWithFrame:frame];
+    [wrapper setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+    [[self.window contentView] addSubview:wrapper];
+    
+    // Initialize Mpv Controller.
+    self.mpv = [[MpvController alloc] initWithView:wrapper];
     
     [NSApp activateIgnoringOtherApps:YES];
 }
@@ -300,41 +91,30 @@ static void wakeup(void *);
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Clean existing peerflix
-    [self killPeerflix];
+    [Peerflix kill];
     
     // Init main window
     [self initWindow];
-    [self initPlayer];
-    [self launchPeerflix];
-    [self connectWs];
+    self.peerflix = [[Peerflix alloc] init];
+    self.peerflix.delegate = self;
 }
 
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
     NSLog(@"new file load: %@", filename);
-    [self play:filename];
+    [self playTorrent:filename];
     return YES;
 }
 
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
-    if(mpv){
-        const char *args[] = {"quit", NULL};
-        mpv_command(mpv, args);
-    }
-    
-    if(task) {
-        [task terminate];
-    }
+    [self.mpv quit];
+    [Peerflix kill];
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {
     return YES;
 }
 
-static void wakeup(void *context) {
-    AppDelegate *a = (__bridge AppDelegate *) context;
-    [a readEvents];
-}
 
 #pragma mark IBActions
 
@@ -350,7 +130,7 @@ static void wakeup(void *context) {
     if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
         NSString *fileUrl = [[[openPanel URLs] objectAtIndex:0] path];
         NSLog(@"file selected: %@", fileUrl);
-        [self play:fileUrl];
+        [self playTorrent:fileUrl];
     }
 
 }

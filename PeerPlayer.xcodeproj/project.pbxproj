@@ -13,6 +13,8 @@
 		CD0C462D1C67475D003910DF /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD0C462B1C67475D003910DF /* MainMenu.xib */; };
 		CD0C46541C67C32B003910DF /* go-peerflix in Resources */ = {isa = PBXBuildFile; fileRef = CD0C46531C67C32B003910DF /* go-peerflix */; };
 		CD0C46551C67C330003910DF /* go-peerflix in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD0C46531C67C32B003910DF /* go-peerflix */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CD724E231C6A311000F931C0 /* MpvController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD724E221C6A311000F931C0 /* MpvController.m */; };
+		CD724E261C6A35B100F931C0 /* Peerflix.m in Sources */ = {isa = PBXBuildFile; fileRef = CD724E251C6A35B100F931C0 /* Peerflix.m */; };
 		CD791E761C6985750098F7C3 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CD791E741C6985750098F7C3 /* SRWebSocket.m */; };
 		CD791E7D1C69A3080098F7C3 /* MagnetOpenController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD791E7C1C69A3080098F7C3 /* MagnetOpenController.m */; };
 /* End PBXBuildFile section */
@@ -39,6 +41,10 @@
 		CD0C462C1C67475D003910DF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		CD0C462E1C67475D003910DF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD0C46531C67C32B003910DF /* go-peerflix */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "go-peerflix"; sourceTree = "<group>"; };
+		CD724E211C6A311000F931C0 /* MpvController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MpvController.h; sourceTree = "<group>"; };
+		CD724E221C6A311000F931C0 /* MpvController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MpvController.m; sourceTree = "<group>"; };
+		CD724E241C6A35B100F931C0 /* Peerflix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Peerflix.h; sourceTree = "<group>"; };
+		CD724E251C6A35B100F931C0 /* Peerflix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Peerflix.m; sourceTree = "<group>"; };
 		CD791E731C6985750098F7C3 /* SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocket.h; sourceTree = "<group>"; };
 		CD791E741C6985750098F7C3 /* SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocket.m; sourceTree = "<group>"; };
 		CD791E7B1C69A3080098F7C3 /* MagnetOpenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MagnetOpenController.h; path = PeerPlayer/MagnetOpenController.h; sourceTree = "<group>"; };
@@ -80,6 +86,10 @@
 				CD724E201C6A2DFB00F931C0 /* Controllers */,
 				CD0C46231C67475D003910DF /* AppDelegate.h */,
 				CD0C46241C67475D003910DF /* AppDelegate.m */,
+				CD724E211C6A311000F931C0 /* MpvController.h */,
+				CD724E221C6A311000F931C0 /* MpvController.m */,
+				CD724E241C6A35B100F931C0 /* Peerflix.h */,
+				CD724E251C6A35B100F931C0 /* Peerflix.m */,
 				CD0C46291C67475D003910DF /* Assets.xcassets */,
 				CD0C462B1C67475D003910DF /* MainMenu.xib */,
 				CD0C462E1C67475D003910DF /* Info.plist */,
@@ -186,10 +196,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD724E261C6A35B100F931C0 /* Peerflix.m in Sources */,
 				CD791E761C6985750098F7C3 /* SRWebSocket.m in Sources */,
 				CD0C46281C67475D003910DF /* main.m in Sources */,
 				CD0C46251C67475D003910DF /* AppDelegate.m in Sources */,
 				CD791E7D1C69A3080098F7C3 /* MagnetOpenController.m in Sources */,
+				CD724E231C6A311000F931C0 /* MpvController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
