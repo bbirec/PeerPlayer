@@ -57,25 +57,28 @@ static void wakeup(void *);
     [task launch];
 }
 
+-(void) killPeerflix {
+    NSTask *controlTask = [[NSTask alloc] init];
+    controlTask.launchPath = @"/usr/bin/pkill";
+    controlTask.arguments = @[@"go-peerflix"];
+    [controlTask launch];
+}
 
--(BOOL) performWithPeerData:(NSData*) returnedData {
+-(NSString*) findVideoFileURL:(NSData*) data {
     NSError *error = nil;
     id object = [NSJSONSerialization
-                 JSONObjectWithData:returnedData
+                 JSONObjectWithData:data
                  options:0
                  error:&error];
     
     if(error) {
         NSLog(@"JSON data is malformed.");
-        return NO;
+        return nil;
     }
     
     if([object isKindOfClass:[NSDictionary class]])
     {
         NSDictionary *results = object;
-        
-        // Start player
-        NSLog(@"Start player");
         
         // Select the largest file
         NSInteger maxSize = 0;
@@ -93,23 +96,18 @@ static void wakeup(void *);
         }
         
         if(targetHash != nil) {
-            NSString* url = [NSString stringWithFormat:@"http://localhost:8000/?hash=%@", targetHash];
-            [self startPlayerWithUrl:url];
-            return YES;
+            return [NSString stringWithFormat:@"http://localhost:8000/?hash=%@", targetHash];
         }
         else {
-            // TODO:
-            NSLog(@"Not found any file to play");
-            return NO;
+            return nil;
         }
     }
     else
     {
         // JSON data is malformed.
         NSLog(@"JSON data is malformed.");
-        return NO;
+        return nil;
     }
-    
 }
 
 
@@ -124,12 +122,21 @@ static void wakeup(void *);
 }
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
-    [webSocket send:@"/Users/bbirec/tmp/es.torrent"];
+
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {
     NSLog(@"Got ws message:%@", message);
-    [self performWithPeerData:[message dataUsingEncoding:NSUTF8StringEncoding]];
+    NSString* url = [self findVideoFileURL:[message dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    if(url != nil) {
+        NSLog(@"Start player with: %@", url);
+        [self startPlayerWithUrl:url];
+    }
+    else {
+        // TODO:
+        NSLog(@"Not found any file to play");
+    }
 }
 
 
@@ -141,6 +148,14 @@ static void wakeup(void *);
                                    selector:@selector(connectWs)
                                    userInfo:nil
                                     repeats:NO];
+}
+
+-(void) play:(NSString*)url {
+    [self stopPlayer];
+    // TODO: show loading message.
+    
+    //
+    [self.socket send:url];
 }
 
 #pragma -
@@ -188,7 +203,13 @@ static void wakeup(void *);
         // Load the indicated file
         const char *cmd[] = {"loadfile", url.UTF8String, NULL};
         check_error(mpv_command(mpv, cmd));
-        
+    });
+}
+
+-(void) stopPlayer {
+    dispatch_async(queue, ^{
+        const char *cmd[] = {"stop", NULL};
+        check_error(mpv_command(mpv, cmd));
     });
 }
 
@@ -197,8 +218,6 @@ static void wakeup(void *);
      NSLog(@"Read data: %@", [[notification userInfo] objectForKey:NSFileHandleNotificationDataItem]);*/
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleReadToEndOfFileCompletionNotification object:[notification object]];
 }
-
-
 
 - (void) handleEvent:(mpv_event *)event
 {
@@ -278,6 +297,9 @@ static void wakeup(void *);
 
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+    // Clean existing peerflix
+    [self killPeerflix];
+    
     // Init main window
     [self initWindow];
     [self initPlayer];
@@ -287,7 +309,7 @@ static void wakeup(void *);
 
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
     NSLog(@"new file load: %@", filename);
-    [self.socket send:filename];
+    [self play:filename];
     return YES;
 }
 
@@ -298,20 +320,14 @@ static void wakeup(void *);
         mpv_command(mpv, args);
     }
     
-    if(thread) {
-        [thread cancel];
-    }
-    
     if(task) {
         [task terminate];
     }
-    
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {
     return YES;
 }
-
 
 static void wakeup(void *context) {
     AppDelegate *a = (__bridge AppDelegate *) context;

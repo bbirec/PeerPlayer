@@ -23,5 +23,9 @@
 @property (strong) NSView* wrapper;
 @property (strong) SRWebSocket* socket;
 
+@property (strong) NSWindow *magnetWindow;
+
+-(void) play:(NSString*)url;
+
 @end
 

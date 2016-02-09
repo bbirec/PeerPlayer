@@ -14,6 +14,7 @@
 		CD0C46541C67C32B003910DF /* go-peerflix in Resources */ = {isa = PBXBuildFile; fileRef = CD0C46531C67C32B003910DF /* go-peerflix */; };
 		CD0C46551C67C330003910DF /* go-peerflix in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD0C46531C67C32B003910DF /* go-peerflix */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CD791E761C6985750098F7C3 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CD791E741C6985750098F7C3 /* SRWebSocket.m */; };
+		CD791E7D1C69A3080098F7C3 /* MagnetOpenController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD791E7C1C69A3080098F7C3 /* MagnetOpenController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,6 +41,8 @@
 		CD0C46531C67C32B003910DF /* go-peerflix */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "go-peerflix"; sourceTree = "<group>"; };
 		CD791E731C6985750098F7C3 /* SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocket.h; sourceTree = "<group>"; };
 		CD791E741C6985750098F7C3 /* SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocket.m; sourceTree = "<group>"; };
+		CD791E7B1C69A3080098F7C3 /* MagnetOpenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MagnetOpenController.h; path = PeerPlayer/MagnetOpenController.h; sourceTree = "<group>"; };
+		CD791E7C1C69A3080098F7C3 /* MagnetOpenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MagnetOpenController.m; path = PeerPlayer/MagnetOpenController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +59,8 @@
 		CD0C46171C67475D003910DF = {
 			isa = PBXGroup;
 			children = (
+				CD791E7B1C69A3080098F7C3 /* MagnetOpenController.h */,
+				CD791E7C1C69A3080098F7C3 /* MagnetOpenController.m */,
 				CD791E6F1C6985750098F7C3 /* SocketRocket */,
 				CD0C46531C67C32B003910DF /* go-peerflix */,
 				CD0C46221C67475D003910DF /* PeerPlayer */,
@@ -175,6 +180,7 @@
 				CD791E761C6985750098F7C3 /* SRWebSocket.m in Sources */,
 				CD0C46281C67475D003910DF /* main.m in Sources */,
 				CD0C46251C67475D003910DF /* AppDelegate.m in Sources */,
+				CD791E7D1C69A3080098F7C3 /* MagnetOpenController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
