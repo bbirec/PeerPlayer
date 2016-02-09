@@ -95,6 +95,8 @@ static void wakeup(void *);
             }
         }
         
+        NSLog(@"Filename: %@", filename);
+        
         if(targetHash != nil) {
             return [NSString stringWithFormat:@"http://localhost:8000/?hash=%@", targetHash];
         }
@@ -332,6 +334,25 @@ static void wakeup(void *);
 static void wakeup(void *context) {
     AppDelegate *a = (__bridge AppDelegate *) context;
     [a readEvents];
+}
+
+#pragma mark IBActions
+
+-(IBAction) openTorrentFile:(id)sender {
+    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+    [openPanel setCanChooseFiles:YES];
+    [openPanel setCanChooseDirectories:NO];
+    [openPanel setResolvesAliases:NO];
+    [openPanel setAllowsMultipleSelection:NO];
+    [openPanel setCanCreateDirectories:NO];
+    [openPanel setTitle:@"Open Torrent File"];
+    
+    if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
+        NSString *fileUrl = [[[openPanel URLs] objectAtIndex:0] path];
+        NSLog(@"file selected: %@", fileUrl);
+        [self play:fileUrl];
+    }
+
 }
 
 @end

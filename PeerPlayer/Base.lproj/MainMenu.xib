@@ -63,15 +63,14 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="File" id="bib-Uj-vzu">
                         <items>
-                            <menuItem title="Open…" keyEquivalent="o" id="IAo-SY-fd9">
+                            <menuItem title="Open Torrent File" keyEquivalent="o" id="IAo-SY-fd9">
                                 <connections>
-                                    <action selector="openDocument:" target="-1" id="bVn-NM-KNZ"/>
+                                    <action selector="openTorrentFile:" target="Voe-Tx-rLC" id="1kP-4e-KuE"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Open Magnet Link" id="QeM-UM-YmL">
-                                <modifierMask key="keyEquivalentModifierMask"/>
+                            <menuItem title="Open Magnet Link" keyEquivalent="O" id="QeM-UM-YmL">
                                 <connections>
-                                    <action selector="open:" target="jmW-zZ-t6u" id="c5f-ef-DlC"/>
+                                    <action selector="openMagnetLink:" target="jmW-zZ-t6u" id="mZg-rI-Y1K"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Open Recent" id="tXI-mr-wws">
@@ -86,6 +85,39 @@
                                         </menuItem>
                                     </items>
                                 </menu>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Edit" id="fSL-iN-CGw">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Edit" id="Pw5-Nd-EK9">
+                        <items>
+                            <menuItem title="Cut" keyEquivalent="x" id="0v5-dv-LCX">
+                                <connections>
+                                    <action selector="cut:" target="-1" id="RXX-zT-UAj"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Copy" keyEquivalent="c" id="g8T-bU-wr5">
+                                <connections>
+                                    <action selector="copy:" target="-1" id="2Uz-qE-blO"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Paste" keyEquivalent="v" id="qdi-g8-Wp4">
+                                <connections>
+                                    <action selector="paste:" target="-1" id="LnW-iL-3Zq"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Delete" id="bGt-Xt-cKz">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="delete:" target="-1" id="5hi-At-UMX"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Select All" keyEquivalent="a" id="V7T-2M-jjA">
+                                <connections>
+                                    <action selector="selectAll:" target="-1" id="ntp-ke-IUm"/>
+                                </connections>
                             </menuItem>
                         </items>
                     </menu>
@@ -129,7 +161,7 @@
                 </menuItem>
             </items>
         </menu>
-        <window title="Open Magnet Link" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" animationBehavior="default" id="0Uc-6s-VHg" customClass="NSPanel">
+        <window title="Open Magnet Link" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="0Uc-6s-VHg" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="112" width="538" height="91"/>
@@ -140,7 +172,7 @@
                 <subviews>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UR1-Xy-dL9">
                         <rect key="frame" x="125" y="49" width="393" height="22"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="magnet://..." drawsBackground="YES" id="VJx-as-Lh1">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="magnet://..." drawsBackground="YES" usesSingleLineMode="YES" id="VJx-as-Lh1">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>

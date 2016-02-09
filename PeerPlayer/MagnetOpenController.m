@@ -11,7 +11,7 @@
 @implementation MagnetOpenController
 
 
--(IBAction) open:(id) sender
+-(IBAction) openMagnetLink:(id) sender
 {
     if([NSApp runModalForWindow:self.panel] == NSFileHandlingPanelOKButton) {
         NSString* url = [self.textField stringValue];

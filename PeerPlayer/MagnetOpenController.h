@@ -16,7 +16,7 @@
 
 @property (weak) IBOutlet AppDelegate* appDelegate;
 
--(IBAction) open:(id) sender;
+-(IBAction) openMagnetLink:(id) sender;
 -(IBAction) confirmed:(id) sender;
 -(IBAction) canceled:(id) sender;
 

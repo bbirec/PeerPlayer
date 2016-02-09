@@ -59,8 +59,6 @@
 		CD0C46171C67475D003910DF = {
 			isa = PBXGroup;
 			children = (
-				CD791E7B1C69A3080098F7C3 /* MagnetOpenController.h */,
-				CD791E7C1C69A3080098F7C3 /* MagnetOpenController.m */,
 				CD791E6F1C6985750098F7C3 /* SocketRocket */,
 				CD0C46531C67C32B003910DF /* go-peerflix */,
 				CD0C46221C67475D003910DF /* PeerPlayer */,
@@ -79,6 +77,7 @@
 		CD0C46221C67475D003910DF /* PeerPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				CD724E201C6A2DFB00F931C0 /* Controllers */,
 				CD0C46231C67475D003910DF /* AppDelegate.h */,
 				CD0C46241C67475D003910DF /* AppDelegate.m */,
 				CD0C46291C67475D003910DF /* Assets.xcassets */,
@@ -95,6 +94,16 @@
 				CD0C46271C67475D003910DF /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CD724E201C6A2DFB00F931C0 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				CD791E7B1C69A3080098F7C3 /* MagnetOpenController.h */,
+				CD791E7C1C69A3080098F7C3 /* MagnetOpenController.m */,
+			);
+			name = Controllers;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		CD791E6F1C6985750098F7C3 /* SocketRocket */ = {

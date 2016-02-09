@@ -27,5 +27,7 @@
 
 -(void) play:(NSString*)url;
 
+-(IBAction) openTorrentFile:(id)sender;
+
 @end
 
