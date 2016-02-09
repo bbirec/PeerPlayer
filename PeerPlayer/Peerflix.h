@@ -29,4 +29,7 @@
 // Download torrent file
 -(void) downloadTorrent:(NSString*)pathOrMagnet;
 
+// Get stream url from file hash.
+-(NSString*) streamUrlFromHash:(NSString*) hash;
+
 @end

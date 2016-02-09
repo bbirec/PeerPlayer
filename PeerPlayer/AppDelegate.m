@@ -23,13 +23,21 @@
 #pragma mark Peerflix
 
 
--(void) playTorrent:(NSString*)url {
+-(void) playTorrent:(NSString*) url {
     [self.mpv stop];
+    self.currentFiles = nil;
     [self.peerflix downloadTorrent:url];
 }
 
+-(void) playVideo:(NSString*) url {
+    
+}
+
 -(void) torrentReady:(NSDictionary*)data {
-    // Select the largest file
+    self.currentFiles = data;
+    [self updateTorrentMenu];
+    
+    // Default action is playing the largest file.
     NSInteger maxSize = 0;
     NSString* targetHash;
     NSString* filename;
@@ -44,15 +52,35 @@
         }
     }
     
-    NSLog(@"Filename: %@", filename);
+    NSLog(@"Largest Filename: %@", filename);
     
     if(targetHash != nil) {
-        NSString* url = [NSString stringWithFormat:@"http://localhost:8000/?hash=%@", targetHash];
-        [self.mpv playWithUrl:url];
+        [self.mpv playWithUrl:[self.peerflix streamUrlFromHash:targetHash]];
     }
     else {
         NSLog(@"Nothing to play");
     }
+}
+
+-(void) updateTorrentMenu {
+    [self.torrentMenu removeAllItems];
+    NSArray* files = [self.currentFiles objectForKey:@"Files"];
+    for(NSDictionary* dict in files) {
+        NSString* filename = [dict objectForKey:@"Filename"];
+        
+        NSMenuItem* item = [[NSMenuItem alloc] initWithTitle:filename
+                                                      action:@selector(torrentMenuItemAction:)
+                                               keyEquivalent:@""];
+        item.representedObject = dict;
+        [self.torrentMenu addItem:item];
+    }
+}
+
+-(void) torrentMenuItemAction:(id) sender {
+    NSDictionary* dict = [sender representedObject];
+    NSString* hash = [dict objectForKey:@"Hash"];
+    NSLog(@"Selected hash: %@", hash);
+    [self.mpv playWithUrl:[self.peerflix streamUrlFromHash:hash]];
 }
 
 #pragma mark App delegate
@@ -97,6 +125,8 @@
     [self initWindow];
     self.peerflix = [[Peerflix alloc] init];
     self.peerflix.delegate = self;
+    
+    [self updateTorrentMenu];
 }
 
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {

@@ -106,4 +106,8 @@
     [self.socket send:pathOrMagnet];
 }
 
+-(NSString*) streamUrlFromHash:(NSString*) hash {
+    return [NSString stringWithFormat:@"http://localhost:8000/?hash=%@", hash];
+}
+
 @end

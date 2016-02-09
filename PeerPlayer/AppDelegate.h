@@ -15,9 +15,13 @@
 @interface AppDelegate : NSObject <NSApplicationDelegate, PeerflixDelegate>
 
 @property (strong) NSWindow *window;
+@property (weak) IBOutlet NSMenu* torrentMenu;
 
 @property (strong) Peerflix* peerflix;
 @property (strong) MpvController* mpv;
+
+// Hold the files of current torrent.
+@property (strong) NSDictionary* currentFiles;
 
 -(void) playTorrent:(NSString*)url;
 -(IBAction) openTorrentFile:(id)sender;
