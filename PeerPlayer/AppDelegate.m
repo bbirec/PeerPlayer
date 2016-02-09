@@ -31,9 +31,15 @@ static void wakeup(void *);
 
 @implementation AppDelegate
 
+#pragma mark Peerflix
 
+- (void)launchPeerflix {
+    if(task) {
+        [task terminate];
+        task = nil;
+    }
 
-- (void)launchPeerflix:(NSString*)torrentFile {
+    
     NSString* execPath = [[NSBundle mainBundle] pathForAuxiliaryExecutable:@"go-peerflix"];
     NSLog(@"%@", execPath);
     
@@ -41,7 +47,7 @@ static void wakeup(void *);
     NSPipe* outputPipe = [NSPipe pipe];
     [task setStandardOutput:outputPipe];
     [task setLaunchPath:execPath];
-    [task setArguments:	[NSArray arrayWithObjects:torrentFile, nil]];
+    [task setArguments:	[NSArray arrayWithObjects:@"-port", @"8000", nil]];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(readCompleted:)
@@ -60,7 +66,7 @@ static void wakeup(void *);
                  error:&error];
     
     if(error) {
-        // JSON data is malformed.
+        NSLog(@"JSON data is malformed.");
         return NO;
     }
     
@@ -68,68 +74,83 @@ static void wakeup(void *);
     {
         NSDictionary *results = object;
         
-        // Start player if it's ready to play.
-        if([results objectForKey:@"Ready"] && self->mpv == nil) {
-            NSLog(@"Start player");
-            
-            // Select the largest file
-            NSInteger maxSize = 0;
-            NSString* targetHash;
-            NSString* filename;
-            NSArray* files = [results objectForKey:@"Files"];
-            for(NSDictionary* dict in files) {
-                NSInteger s = [[dict objectForKey:@"Size"] longValue];
-                NSLog(@"size: %ld", s);
-                if(maxSize < s) {
-                    maxSize = s;
-                    targetHash = [dict objectForKey:@"Hash"];
-                    filename = [dict objectForKey:@"Filename"];
-                }
+        // Start player
+        NSLog(@"Start player");
+        
+        // Select the largest file
+        NSInteger maxSize = 0;
+        NSString* targetHash;
+        NSString* filename;
+        NSArray* files = [results objectForKey:@"Files"];
+        for(NSDictionary* dict in files) {
+            NSInteger s = [[dict objectForKey:@"Size"] longValue];
+            NSLog(@"size: %ld", s);
+            if(maxSize < s) {
+                maxSize = s;
+                targetHash = [dict objectForKey:@"Hash"];
+                filename = [dict objectForKey:@"Filename"];
             }
-            
-            int port = [[results objectForKey:@"Port"] intValue];
-            
-            if(targetHash != nil) {
-                NSString* url = [NSString stringWithFormat:@"http://localhost:%d/?hash=%@", port, targetHash];
-                NSLog(@"url: %@", url);
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self startPlayerWithUrl:url];
-                });
-                return YES;
-
-                
-            }
-            else {
-                // TODO:
-                NSLog(@"Not found any file to play");
-                return NO;
-            }
-            
+        }
+        
+        if(targetHash != nil) {
+            NSString* url = [NSString stringWithFormat:@"http://localhost:8000/?hash=%@", targetHash];
+            [self startPlayerWithUrl:url];
+            return YES;
         }
         else {
+            // TODO:
+            NSLog(@"Not found any file to play");
             return NO;
         }
     }
     else
     {
         // JSON data is malformed.
+        NSLog(@"JSON data is malformed.");
         return NO;
     }
     
 }
 
 
-- (void)readCompleted:(NSNotification *)notification {
-    NSLog(@"Read data: %@", [[notification userInfo] objectForKey:NSFileHandleNotificationDataItem]);
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleReadToEndOfFileCompletionNotification object:[notification object]];
+#pragma mark WebSocket
+
+-(void) connectWs {
+    // Web socket
+    NSURL* wsUrl = [NSURL URLWithString:@"http://localhost:8000/ws"];
+    self.socket = [[SRWebSocket alloc] initWithURL:wsUrl];
+    self.socket.delegate = self;
+    [self.socket open];
 }
 
--(void) startPlayerWithUrl:(NSString*) url {
+- (void)webSocketDidOpen:(SRWebSocket *)webSocket {
+    [webSocket send:@"/Users/bbirec/tmp/es.torrent"];
+}
+
+- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {
+    NSLog(@"Got ws message:%@", message);
+    [self performWithPeerData:[message dataUsingEncoding:NSUTF8StringEncoding]];
+}
+
+
+- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
+    NSLog(@"%@", error);
+    //TODO : When web socket server could not start. Exponential back off?
+    [NSTimer scheduledTimerWithTimeInterval:.1
+                                     target:self
+                                   selector:@selector(connectWs)
+                                   userInfo:nil
+                                    repeats:NO];
+}
+
+#pragma -
+#pragma mark MPV
+
+-(void) initPlayer {
     // Deal with MPV in the background.
     queue = dispatch_queue_create("mpv", DISPATCH_QUEUE_SERIAL);
+    
     dispatch_async(queue, ^{
-        
         mpv = mpv_create();
         if (!mpv) {
             printf("failed creating context\n");
@@ -156,76 +177,28 @@ static void wakeup(void *);
         
         // Register to be woken up whenever mpv generates new events.
         mpv_set_wakeup_callback(mpv, wakeup, (__bridge void *) self);
-        
-        // Load the indicated file
-        const char *cmd[] = {"loadfile", url.UTF8String, NULL};
-        check_error(mpv_command(mpv, cmd));
     });
 }
 
--(void) initSubscription {
-    // Subscribe the publish from peerflix
-    ctx = [[ZMQContext alloc] initWithIOThreads:1];
+-(void) startPlayerWithUrl:(NSString*) url {
+    NSLog(@"play url: %@", url);
     
-    NSString *endpoint = @"tcp://localhost:5556";
-    ZMQSocket *subscriber = [ctx socketWithType:ZMQ_SUB];
-    BOOL didConnect = [subscriber connectToEndpoint:endpoint];
-    if (!didConnect) {
-        NSLog(@"*** Failed to connect to endpoint [%@].", endpoint);
-        return;
-    }
-    
-    [subscriber subscribeAll];
-    
-    for(;;) {
-        NSData* data = [subscriber receiveDataWithFlags:0];
-        NSLog(@"Read data from peerflix");
-        [self performWithPeerData:data];
-        sleep(1);
-    }
-    
+    // Deal with MPV in the background.
+    dispatch_async(queue, ^{
+        // Load the indicated file
+        const char *cmd[] = {"loadfile", url.UTF8String, NULL};
+        check_error(mpv_command(mpv, cmd));
+        
+    });
 }
 
--(void) initWindow {
-    // Style the window and prepare for mpv player.
-    int mask = NSTitledWindowMask|NSClosableWindowMask|
-    NSMiniaturizableWindowMask|NSResizableWindowMask|
-    NSFullSizeContentViewWindowMask|NSUnifiedTitleAndToolbarWindowMask;
-    
-    self.window = [[CocoaWindow alloc] initWithContentRect:NSMakeRect(0,0, 640, 480)
-                                                 styleMask:mask
-                                                   backing:NSBackingStoreBuffered
-                                                     defer:NO];
-    
-    [self.window setStyleMask:mask];
-    [self.window setBackgroundColor:
-     [NSColor colorWithCalibratedRed:0 green:0 blue:0 alpha:1.f]];
-    [self.window makeMainWindow];
-    [self.window makeKeyAndOrderFront:nil];
-    [self.window setMovableByWindowBackground:YES];
-    [self.window setTitlebarAppearsTransparent:YES];
-    [self.window setTitleVisibility:NSWindowTitleHidden];
-    
-    NSRect frame = [[self.window contentView] bounds];
-    self.wrapper = [[NSView alloc] initWithFrame:frame];
-    [self.wrapper setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-    [[self.window contentView] addSubview:self.wrapper];
-    
-    [NSApp activateIgnoringOtherApps:YES];
+- (void)readCompleted:(NSNotification *)notification {
+    /*
+     NSLog(@"Read data: %@", [[notification userInfo] objectForKey:NSFileHandleNotificationDataItem]);*/
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleReadToEndOfFileCompletionNotification object:[notification object]];
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    // Init main window
-    [self initWindow];
-    
-    // Subscribe the message from peerflix
-    NSThread* thread = [[NSThread alloc] initWithTarget:self selector:@selector(initSubscription) object:nil];
-    [thread start];
-    
-    // Launch the peerflix
-    [self launchPeerflix:@"/Users/bbirec/tmp/es.torrent"];
 
-}
 
 - (void) handleEvent:(mpv_event *)event
 {
@@ -271,6 +244,53 @@ static void wakeup(void *);
     });
 }
 
+#pragma -
+
+#pragma mark App delegate
+
+-(void) initWindow {
+    // Style the window and prepare for mpv player.
+    int mask = NSTitledWindowMask|NSClosableWindowMask|
+    NSMiniaturizableWindowMask|NSResizableWindowMask|
+    NSFullSizeContentViewWindowMask|NSUnifiedTitleAndToolbarWindowMask;
+    
+    self.window = [[CocoaWindow alloc] initWithContentRect:NSMakeRect(0,0, 640, 480)
+                                                 styleMask:mask
+                                                   backing:NSBackingStoreBuffered
+                                                     defer:NO];
+    
+    [self.window setStyleMask:mask];
+    [self.window setBackgroundColor:
+     [NSColor colorWithCalibratedRed:0 green:0 blue:0 alpha:1.f]];
+    [self.window makeMainWindow];
+    [self.window makeKeyAndOrderFront:nil];
+    [self.window setMovableByWindowBackground:YES];
+    [self.window setTitlebarAppearsTransparent:YES];
+    [self.window setTitleVisibility:NSWindowTitleHidden];
+    
+    NSRect frame = [[self.window contentView] bounds];
+    self.wrapper = [[NSView alloc] initWithFrame:frame];
+    [self.wrapper setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+    [[self.window contentView] addSubview:self.wrapper];
+    
+    [NSApp activateIgnoringOtherApps:YES];
+}
+
+
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+    // Init main window
+    [self initWindow];
+    [self initPlayer];
+    [self launchPeerflix];
+    [self connectWs];
+}
+
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
+    NSLog(@"new file load: %@", filename);
+    [self.socket send:filename];
+    return YES;
+}
+
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
     if(mpv){
@@ -278,18 +298,19 @@ static void wakeup(void *);
         mpv_command(mpv, args);
     }
     
-    if(ctx) {
-        [ctx closeSockets];
-        [ctx terminate];
+    if(thread) {
+        [thread cancel];
     }
-
+    
+    if(task) {
+        [task terminate];
+    }
+    
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {
     return YES;
 }
-
-@end
 
 
 static void wakeup(void *context) {
@@ -297,3 +318,4 @@ static void wakeup(void *context) {
     [a readEvents];
 }
 
+@end

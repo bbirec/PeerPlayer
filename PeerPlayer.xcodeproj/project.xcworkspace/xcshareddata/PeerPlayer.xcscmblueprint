@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "00654ABF1C101277EAA9BA2080E01447265D291A",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "00654ABF1C101277EAA9BA2080E01447265D291A" : 0,
+    "ABB939127996C66F7E852A780552ADEEF03C6B13" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "4A947C66-C0F9-4324-AE29-499A585D8931",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "00654ABF1C101277EAA9BA2080E01447265D291A" : "PeerPlayer\/",
+    "ABB939127996C66F7E852A780552ADEEF03C6B13" : "SocketRocket\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "PeerPlayer",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "PeerPlayer.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/bbirec\/PeerPlayer.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "00654ABF1C101277EAA9BA2080E01447265D291A"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/square\/SocketRocket.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "ABB939127996C66F7E852A780552ADEEF03C6B13"
+    }
+  ]
+}

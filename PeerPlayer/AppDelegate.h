@@ -9,18 +9,19 @@
 #import <Cocoa/Cocoa.h>
 
 #include <mpv/client.h>
-#import "ZMQObjC.h"
+#import "SRWebSocket.h"
 
-@interface AppDelegate : NSObject <NSApplicationDelegate>{
+@interface AppDelegate : NSObject <NSApplicationDelegate, SRWebSocketDelegate>{
     mpv_handle *mpv;
     dispatch_queue_t queue;
-    ZMQContext *ctx;
     
     NSTask *task;
+    NSThread *thread;
 }
 
 @property (strong) NSWindow *window;
 @property (strong) NSView* wrapper;
+@property (strong) SRWebSocket* socket;
 
 @end
 

@@ -13,9 +13,7 @@
 		CD0C462D1C67475D003910DF /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD0C462B1C67475D003910DF /* MainMenu.xib */; };
 		CD0C46541C67C32B003910DF /* go-peerflix in Resources */ = {isa = PBXBuildFile; fileRef = CD0C46531C67C32B003910DF /* go-peerflix */; };
 		CD0C46551C67C330003910DF /* go-peerflix in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD0C46531C67C32B003910DF /* go-peerflix */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		CD791E431C6887300098F7C3 /* ZMQContext.m in Sources */ = {isa = PBXBuildFile; fileRef = CD791E3D1C6887300098F7C3 /* ZMQContext.m */; };
-		CD791E441C6887300098F7C3 /* ZMQException.m in Sources */ = {isa = PBXBuildFile; fileRef = CD791E3F1C6887300098F7C3 /* ZMQException.m */; };
-		CD791E451C6887300098F7C3 /* ZMQSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CD791E421C6887300098F7C3 /* ZMQSocket.m */; };
+		CD791E761C6985750098F7C3 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CD791E741C6985750098F7C3 /* SRWebSocket.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,13 +38,8 @@
 		CD0C462C1C67475D003910DF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		CD0C462E1C67475D003910DF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD0C46531C67C32B003910DF /* go-peerflix */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "go-peerflix"; sourceTree = "<group>"; };
-		CD791E3C1C6887300098F7C3 /* ZMQContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQContext.h; sourceTree = "<group>"; };
-		CD791E3D1C6887300098F7C3 /* ZMQContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMQContext.m; sourceTree = "<group>"; };
-		CD791E3E1C6887300098F7C3 /* ZMQException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQException.h; sourceTree = "<group>"; };
-		CD791E3F1C6887300098F7C3 /* ZMQException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMQException.m; sourceTree = "<group>"; };
-		CD791E401C6887300098F7C3 /* ZMQObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQObjC.h; sourceTree = "<group>"; };
-		CD791E411C6887300098F7C3 /* ZMQSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQSocket.h; sourceTree = "<group>"; };
-		CD791E421C6887300098F7C3 /* ZMQSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMQSocket.m; sourceTree = "<group>"; };
+		CD791E731C6985750098F7C3 /* SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocket.h; sourceTree = "<group>"; };
+		CD791E741C6985750098F7C3 /* SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocket.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,7 +56,7 @@
 		CD0C46171C67475D003910DF = {
 			isa = PBXGroup;
 			children = (
-				CD791E3B1C6887300098F7C3 /* objc-zmq */,
+				CD791E6F1C6985750098F7C3 /* SocketRocket */,
 				CD0C46531C67C32B003910DF /* go-peerflix */,
 				CD0C46221C67475D003910DF /* PeerPlayer */,
 				CD0C46211C67475D003910DF /* Products */,
@@ -99,18 +92,13 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		CD791E3B1C6887300098F7C3 /* objc-zmq */ = {
+		CD791E6F1C6985750098F7C3 /* SocketRocket */ = {
 			isa = PBXGroup;
 			children = (
-				CD791E3C1C6887300098F7C3 /* ZMQContext.h */,
-				CD791E3D1C6887300098F7C3 /* ZMQContext.m */,
-				CD791E3E1C6887300098F7C3 /* ZMQException.h */,
-				CD791E3F1C6887300098F7C3 /* ZMQException.m */,
-				CD791E401C6887300098F7C3 /* ZMQObjC.h */,
-				CD791E411C6887300098F7C3 /* ZMQSocket.h */,
-				CD791E421C6887300098F7C3 /* ZMQSocket.m */,
+				CD791E731C6985750098F7C3 /* SRWebSocket.h */,
+				CD791E741C6985750098F7C3 /* SRWebSocket.m */,
 			);
-			path = "objc-zmq";
+			path = SocketRocket;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -184,11 +172,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD791E441C6887300098F7C3 /* ZMQException.m in Sources */,
-				CD791E431C6887300098F7C3 /* ZMQContext.m in Sources */,
+				CD791E761C6985750098F7C3 /* SRWebSocket.m in Sources */,
 				CD0C46281C67475D003910DF /* main.m in Sources */,
 				CD0C46251C67475D003910DF /* AppDelegate.m in Sources */,
-				CD791E451C6887300098F7C3 /* ZMQSocket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
