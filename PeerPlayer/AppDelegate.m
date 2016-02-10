@@ -18,6 +18,59 @@
 @end
 
 
+@interface EventView : NSView<NSDraggingDestination>
+@end
+
+@implementation EventView
+-(id) initWithFrame:(NSRect)frameRect {
+    if(self = [super initWithFrame:frameRect]) {
+        [self registerForDraggedTypes:@[NSFilenamesPboardType,
+                                        NSURLPboardType]];
+    }
+    return self;
+}
+
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+{
+    NSPasteboard *pboard = [sender draggingPasteboard];
+    NSArray *types = [pboard types];
+    if ([types containsObject:NSURLPboardType])
+        return NSDragOperationCopy;
+    else
+        return NSDragOperationNone;
+}
+
+- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
+{
+    AppDelegate* delegate = [[NSApplication sharedApplication] delegate];
+    
+    NSPasteboard *pboard = [sender draggingPasteboard];
+    if ([[pboard types] containsObject:NSURLPboardType]) {
+        NSString* url = [[NSURL URLFromPasteboard:pboard] absoluteString];
+        // Local file
+        if([url hasPrefix:@"file:///.file/id="]) {
+            NSString* filepath = [[NSURL URLFromPasteboard:pboard] path];
+            
+            // Accept only .torrent file
+            if([[filepath pathExtension] isEqualToString:@"torrent"]) {
+                NSLog(@"filepath: %@", filepath);
+                [delegate playTorrent:filepath];
+                return YES;
+            }
+        }
+        // Link
+        else if([url hasPrefix:@"magnet://"]){
+            NSLog(@"magnet: %@", url);
+            [delegate playTorrent:url];
+            return YES;
+        }
+    }
+    return NO;
+}
+
+@end
+
+
 @implementation AppDelegate
 
 #pragma mark Peerflix
@@ -107,7 +160,7 @@
     [self.window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
     
     NSRect frame = [[self.window contentView] bounds];
-    NSView* wrapper = [[NSView alloc] initWithFrame:frame];
+    NSView* wrapper = [[EventView alloc] initWithFrame:frame];
     [wrapper setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
     [[self.window contentView] addSubview:wrapper];
     
