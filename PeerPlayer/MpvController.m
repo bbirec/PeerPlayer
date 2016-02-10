@@ -140,7 +140,9 @@ static void glupdate(void *ctx)
 
 @implementation CocoaWindow
 - (BOOL)canBecomeMainWindow { return YES; }
+
 - (BOOL)canBecomeKeyWindow { return YES; }
+
 - (void)initOGLView {
     NSRect bounds = [[self contentView] bounds];
     // window coordinate origin is bottom left
@@ -148,6 +150,29 @@ static void glupdate(void *ctx)
     self.glView = [[MpvClientOGLView alloc] initWithFrame:glFrame];
     [self.contentView addSubview:self.glView];
 }
+
+- (void)keyDown:(NSEvent *)event {
+    NSLog(@"Key down: %@", event);
+    
+    
+    switch(event.keyCode) {
+        case 49:
+            // Toggle pause
+            [self.controller togglePause];
+            break;
+        case 123:
+            // Seek -10
+            [self.controller seek:-10];
+            break;
+        case 124:
+            // Seek 10
+            [self.controller seek:10];
+            break;
+        default:
+            break;
+    }
+}
+
 @end
 
 
@@ -223,6 +248,24 @@ static void wakeup(void *context) {
 -(void) stop {
     dispatch_async(queue, ^{
         const char *cmd[] = {"stop", NULL};
+        check_error(mpv_command(mpv, cmd));
+    });
+}
+
+-(void) togglePause {
+    dispatch_async(queue, ^{
+        int pause;
+        mpv_get_property(mpv, "pause", MPV_FORMAT_FLAG, &pause);
+        pause = !pause;
+        mpv_set_property(mpv, "pause", MPV_FORMAT_FLAG, (void*)&pause);
+    });
+}
+
+-(void) seek:(int)seconds {
+    dispatch_async(queue, ^{
+        // Load the indicated file
+        const char* sec = [[NSString stringWithFormat:@"%d", seconds] UTF8String];
+        const char *cmd[] = {"seek", sec, NULL};
         check_error(mpv_command(mpv, cmd));
     });
 }

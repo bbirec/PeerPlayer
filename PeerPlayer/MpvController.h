@@ -12,6 +12,10 @@
 #import <mpv/client.h>
 #import <mpv/opengl_cb.h>
 
+@protocol PlayerController
+-(void) togglePause;
+-(void) seek:(int)seconds;
+@end
 
 @interface MpvClientOGLView : NSOpenGLView<NSDraggingDestination>
 @property mpv_opengl_cb_context *mpvGL;
@@ -23,12 +27,12 @@
 
 @interface CocoaWindow : NSWindow
 @property(strong) MpvClientOGLView *glView;
-
+@property(strong) id<PlayerController> controller;
 - (void)initOGLView;
 @end
 
 
-@interface MpvController : NSObject {
+@interface MpvController : NSObject<PlayerController> {
     mpv_handle *mpv;
     dispatch_queue_t queue;
 }
@@ -40,5 +44,7 @@
 -(void) playWithUrl:(NSString*) url;
 -(void) stop;
 -(void) quit;
+-(void) togglePause;
+-(void) seek:(int)seconds;
 
 @end

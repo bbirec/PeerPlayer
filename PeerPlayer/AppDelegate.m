@@ -93,6 +93,8 @@
     // Initialize Mpv Controller.
     self.mpv = [[MpvController alloc] initWithWindow:self.window];
     
+    self.window.controller = self.mpv;
+    
     [NSApp activateIgnoringOtherApps:YES];
 }
 
