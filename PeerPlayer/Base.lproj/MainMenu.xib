@@ -141,6 +141,12 @@
                                     <action selector="performZoom:" target="-1" id="DIl-cC-cCs"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Enter Full Screen" keyEquivalent="f" id="g2W-A8-lOw">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="toggleFullScreen:" target="-1" id="tBS-x6-igc"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
                             <menuItem title="Bring All to Front" id="LE2-aR-0XJ">
                                 <modifierMask key="keyEquivalentModifierMask"/>
@@ -173,7 +179,7 @@
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="112" width="538" height="91"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
             <view key="contentView" id="2wF-T4-HlQ">
                 <rect key="frame" x="0.0" y="0.0" width="538" height="91"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -222,7 +228,7 @@ Gw
                     </button>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="592" y="526.5"/>
+            <point key="canvasLocation" x="587" y="725.5"/>
         </window>
         <customObject id="jmW-zZ-t6u" customClass="MagnetOpenController">
             <connections>

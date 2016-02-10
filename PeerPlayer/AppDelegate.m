@@ -104,6 +104,7 @@
     [self.window setMovableByWindowBackground:YES];
     [self.window setTitlebarAppearsTransparent:YES];
     [self.window setTitleVisibility:NSWindowTitleHidden];
+    [self.window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
     
     NSRect frame = [[self.window contentView] bounds];
     NSView* wrapper = [[NSView alloc] initWithFrame:frame];
