@@ -14,7 +14,7 @@
 
 @interface AppDelegate : NSObject <NSApplicationDelegate, PeerflixDelegate>
 
-@property (strong) NSWindow *window;
+@property (strong) CocoaWindow *window;
 @property (weak) IBOutlet NSMenu* torrentMenu;
 
 @property (strong) Peerflix* peerflix;

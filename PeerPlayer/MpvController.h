@@ -7,16 +7,35 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#include <mpv/client.h>
+#import <OpenGL/gl.h>
+
+#import <mpv/client.h>
+#import <mpv/opengl_cb.h>
+
+
+@interface MpvClientOGLView : NSOpenGLView<NSDraggingDestination>
+@property mpv_opengl_cb_context *mpvGL;
+- (instancetype)initWithFrame:(NSRect)frame;
+- (void)drawRect;
+- (void)fillBlack;
+@end
+
+
+@interface CocoaWindow : NSWindow
+@property(strong) MpvClientOGLView *glView;
+
+- (void)initOGLView;
+@end
+
 
 @interface MpvController : NSObject {
     mpv_handle *mpv;
     dispatch_queue_t queue;
 }
 
-@property (strong) NSView* wrapper;
+@property (strong) CocoaWindow* window;
 
--(id) initWithView:(NSView*) wrapper;
+-(id) initWithWindow:(CocoaWindow*) window;
 
 -(void) playWithUrl:(NSString*) url;
 -(void) stop;

@@ -9,81 +9,12 @@
 #import "AppDelegate.h"
 
 
-@interface CocoaWindow : NSWindow
-@end
-
-@implementation CocoaWindow
-- (BOOL)canBecomeMainWindow { return YES; }
-- (BOOL)canBecomeKeyWindow { return YES; }
-@end
-
-
-@interface EventView : NSView<NSDraggingDestination>
-@end
-
-@implementation EventView
--(id) initWithFrame:(NSRect)frameRect {
-    if(self = [super initWithFrame:frameRect]) {
-        [self registerForDraggedTypes:@[NSFilenamesPboardType,
-                                        NSURLPboardType]];
-    }
-    return self;
-}
-
-- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
-{
-    NSPasteboard *pboard = [sender draggingPasteboard];
-    NSArray *types = [pboard types];
-    if ([types containsObject:NSURLPboardType])
-        return NSDragOperationCopy;
-    else
-        return NSDragOperationNone;
-}
-
-- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
-{
-    AppDelegate* delegate = [[NSApplication sharedApplication] delegate];
-    
-    NSPasteboard *pboard = [sender draggingPasteboard];
-    if ([[pboard types] containsObject:NSURLPboardType]) {
-        NSString* url = [[NSURL URLFromPasteboard:pboard] absoluteString];
-        // Local file
-        if([url hasPrefix:@"file:///.file/id="]) {
-            NSString* filepath = [[NSURL URLFromPasteboard:pboard] path];
-            
-            // Accept only .torrent file
-            if([[filepath pathExtension] isEqualToString:@"torrent"]) {
-                NSLog(@"filepath: %@", filepath);
-                [delegate playTorrent:filepath];
-                return YES;
-            }
-        }
-        // Link
-        else if([url hasPrefix:@"magnet://"]){
-            NSLog(@"magnet: %@", url);
-            [delegate playTorrent:url];
-            return YES;
-        }
-    }
-    return NO;
-}
-
-@end
-
-
 @implementation AppDelegate
-
-#pragma mark Peerflix
-
 
 -(void) playTorrent:(NSString*) url {
     [self.mpv stop];
     self.currentFiles = nil;
     [self.peerflix downloadTorrent:url];
-}
-
--(void) playVideo:(NSString*) url {
-    
 }
 
 -(void) torrentReady:(NSDictionary*)data {
@@ -136,9 +67,8 @@
     [self.mpv playWithUrl:[self.peerflix streamUrlFromHash:hash]];
 }
 
-#pragma mark App delegate
 
--(void) initWindow {
+-(void) createWindow {
     // Style the window and prepare for mpv player.
     int mask = NSTitledWindowMask|NSClosableWindowMask|
     NSMiniaturizableWindowMask|NSResizableWindowMask|
@@ -148,7 +78,8 @@
                                                  styleMask:mask
                                                    backing:NSBackingStoreBuffered
                                                      defer:NO];
-    
+    [self.window setMinSize:NSMakeSize(200, 200)];
+    [self.window initOGLView];
     [self.window setStyleMask:mask];
     [self.window setBackgroundColor:
      [NSColor colorWithCalibratedRed:0 green:0 blue:0 alpha:1.f]];
@@ -159,24 +90,27 @@
     [self.window setTitleVisibility:NSWindowTitleHidden];
     [self.window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
     
-    NSRect frame = [[self.window contentView] bounds];
-    NSView* wrapper = [[EventView alloc] initWithFrame:frame];
-    [wrapper setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-    [[self.window contentView] addSubview:wrapper];
-    
     // Initialize Mpv Controller.
-    self.mpv = [[MpvController alloc] initWithView:wrapper];
+    self.mpv = [[MpvController alloc] initWithWindow:self.window];
     
     [NSApp activateIgnoringOtherApps:YES];
 }
 
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+    atexit_b(^{
+        // Because activation policy has just been set to behave like a real
+        // application, that policy must be reset on exit to prevent, among
+        // other things, the menubar created here from remaining on screen.
+        [NSApp setActivationPolicy:NSApplicationActivationPolicyProhibited];
+    });
+    
     // Clean existing peerflix
     [Peerflix kill];
     
     // Init main window
-    [self initWindow];
+    [self createWindow];
     self.peerflix = [[Peerflix alloc] init];
     self.peerflix.delegate = self;
     
