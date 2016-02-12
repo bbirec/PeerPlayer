@@ -13,6 +13,8 @@
 		CD0C462D1C67475D003910DF /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD0C462B1C67475D003910DF /* MainMenu.xib */; };
 		CD0C46541C67C32B003910DF /* go-peerflix in Resources */ = {isa = PBXBuildFile; fileRef = CD0C46531C67C32B003910DF /* go-peerflix */; };
 		CD0C46551C67C330003910DF /* go-peerflix in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD0C46531C67C32B003910DF /* go-peerflix */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CD67EA3D1C6E54C20061BA00 /* ControlUI.m in Sources */ = {isa = PBXBuildFile; fileRef = CD67EA3C1C6E54C20061BA00 /* ControlUI.m */; };
+		CD67EA401C6E58BF0061BA00 /* RootView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD67EA3F1C6E58BF0061BA00 /* RootView.m */; };
 		CD724E231C6A311000F931C0 /* MpvController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD724E221C6A311000F931C0 /* MpvController.m */; };
 		CD724E261C6A35B100F931C0 /* Peerflix.m in Sources */ = {isa = PBXBuildFile; fileRef = CD724E251C6A35B100F931C0 /* Peerflix.m */; };
 		CD724E291C6AF27B00F931C0 /* PeerPlayer.icns in Resources */ = {isa = PBXBuildFile; fileRef = CD724E281C6AF27B00F931C0 /* PeerPlayer.icns */; };
@@ -42,8 +44,12 @@
 		CD0C462C1C67475D003910DF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		CD0C462E1C67475D003910DF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD0C46531C67C32B003910DF /* go-peerflix */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "go-peerflix"; sourceTree = "<group>"; };
-		CD724E211C6A311000F931C0 /* MpvController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MpvController.h; sourceTree = "<group>"; };
-		CD724E221C6A311000F931C0 /* MpvController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MpvController.m; sourceTree = "<group>"; };
+		CD67EA3B1C6E54C20061BA00 /* ControlUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ControlUI.h; path = PeerPlayer/ControlUI.h; sourceTree = "<group>"; };
+		CD67EA3C1C6E54C20061BA00 /* ControlUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ControlUI.m; path = PeerPlayer/ControlUI.m; sourceTree = "<group>"; };
+		CD67EA3E1C6E58BF0061BA00 /* RootView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootView.h; sourceTree = "<group>"; };
+		CD67EA3F1C6E58BF0061BA00 /* RootView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootView.m; sourceTree = "<group>"; };
+		CD724E211C6A311000F931C0 /* MpvController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MpvController.h; path = PeerPlayer/MpvController.h; sourceTree = "<group>"; };
+		CD724E221C6A311000F931C0 /* MpvController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MpvController.m; path = PeerPlayer/MpvController.m; sourceTree = "<group>"; };
 		CD724E241C6A35B100F931C0 /* Peerflix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Peerflix.h; sourceTree = "<group>"; };
 		CD724E251C6A35B100F931C0 /* Peerflix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Peerflix.m; sourceTree = "<group>"; };
 		CD724E281C6AF27B00F931C0 /* PeerPlayer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = PeerPlayer.icns; sourceTree = "<group>"; };
@@ -85,14 +91,12 @@
 		CD0C46221C67475D003910DF /* PeerPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				CD724E271C6AF27B00F931C0 /* Icons */,
 				CD724E201C6A2DFB00F931C0 /* Controllers */,
+				CD67EA421C6E5DD40061BA00 /* View */,
+				CD67EA411C6E5DAD0061BA00 /* Torrent */,
+				CD724E271C6AF27B00F931C0 /* Icons */,
 				CD0C46231C67475D003910DF /* AppDelegate.h */,
 				CD0C46241C67475D003910DF /* AppDelegate.m */,
-				CD724E211C6A311000F931C0 /* MpvController.h */,
-				CD724E221C6A311000F931C0 /* MpvController.m */,
-				CD724E241C6A35B100F931C0 /* Peerflix.h */,
-				CD724E251C6A35B100F931C0 /* Peerflix.m */,
 				CD0C46291C67475D003910DF /* Assets.xcassets */,
 				CD0C462B1C67475D003910DF /* MainMenu.xib */,
 				CD0C462E1C67475D003910DF /* Info.plist */,
@@ -109,11 +113,33 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		CD67EA411C6E5DAD0061BA00 /* Torrent */ = {
+			isa = PBXGroup;
+			children = (
+				CD724E241C6A35B100F931C0 /* Peerflix.h */,
+				CD724E251C6A35B100F931C0 /* Peerflix.m */,
+			);
+			name = Torrent;
+			sourceTree = "<group>";
+		};
+		CD67EA421C6E5DD40061BA00 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				CD67EA3E1C6E58BF0061BA00 /* RootView.h */,
+				CD67EA3F1C6E58BF0061BA00 /* RootView.m */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
 		CD724E201C6A2DFB00F931C0 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				CD724E211C6A311000F931C0 /* MpvController.h */,
+				CD724E221C6A311000F931C0 /* MpvController.m */,
 				CD791E7B1C69A3080098F7C3 /* MagnetOpenController.h */,
 				CD791E7C1C69A3080098F7C3 /* MagnetOpenController.m */,
+				CD67EA3B1C6E54C20061BA00 /* ControlUI.h */,
+				CD67EA3C1C6E54C20061BA00 /* ControlUI.m */,
 			);
 			name = Controllers;
 			path = ..;
@@ -208,9 +234,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD67EA3D1C6E54C20061BA00 /* ControlUI.m in Sources */,
 				CD724E261C6A35B100F931C0 /* Peerflix.m in Sources */,
 				CD791E761C6985750098F7C3 /* SRWebSocket.m in Sources */,
 				CD0C46281C67475D003910DF /* main.m in Sources */,
+				CD67EA401C6E58BF0061BA00 /* RootView.m in Sources */,
 				CD0C46251C67475D003910DF /* AppDelegate.m in Sources */,
 				CD791E7D1C69A3080098F7C3 /* MagnetOpenController.m in Sources */,
 				CD724E231C6A311000F931C0 /* MpvController.m in Sources */,

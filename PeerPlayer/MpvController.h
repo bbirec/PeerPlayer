@@ -8,13 +8,18 @@
 
 #import <Cocoa/Cocoa.h>
 #import <OpenGL/gl.h>
-
 #import <mpv/client.h>
 #import <mpv/opengl_cb.h>
 
-@protocol PlayerController
--(void) togglePause;
--(void) seek:(int)seconds;
+#define kPPPlayInfoKey @"info"
+#define kPPPlayInfoChanged @"PPPlayInfoChanged"
+
+@interface PlayInfo : NSObject
+
+@property double duration; // in seconds
+@property double timePos; // in seconds
+@property BOOL paused;
+
 @end
 
 @interface MpvClientOGLView : NSOpenGLView<NSDraggingDestination>
@@ -27,17 +32,19 @@
 
 @interface CocoaWindow : NSWindow
 @property(strong) MpvClientOGLView *glView;
-@property(strong) id<PlayerController> controller;
 - (void)initOGLView;
 @end
 
 
-@interface MpvController : NSObject<PlayerController> {
+@interface MpvController : NSObject {
     mpv_handle *mpv;
     dispatch_queue_t queue;
 }
 
 @property (strong) CocoaWindow* window;
+@property (strong) PlayInfo* info;
+
++(MpvController*) getInstance;
 
 -(id) initWithWindow:(CocoaWindow*) window;
 

@@ -14,9 +14,22 @@
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
                 <outlet property="torrentMenu" destination="AW7-2I-wWd" id="Ihy-KI-bVv"/>
+                <outlet property="window" destination="zzf-l0-hyd" id="pkp-2V-uQq"/>
             </connections>
         </customObject>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
+        <customObject id="jmW-zZ-t6u" customClass="MagnetOpenController">
+            <connections>
+                <outlet property="appDelegate" destination="Voe-Tx-rLC" id="grw-aP-I0S"/>
+                <outlet property="panel" destination="0Uc-6s-VHg" id="bYM-H5-iWr"/>
+                <outlet property="textField" destination="UR1-Xy-dL9" id="7ba-8y-7wi"/>
+            </connections>
+        </customObject>
+        <customObject id="tSp-6z-6Ky" customClass="ControlUI">
+            <connections>
+                <outlet property="osd" destination="VZa-LT-4Sy" id="GjX-C7-Qg7"/>
+            </connections>
+        </customObject>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
             <items>
                 <menuItem title="PeerPlayer" id="1Xt-HY-uBw">
@@ -179,7 +192,7 @@
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="112" width="538" height="91"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
             <view key="contentView" id="2wF-T4-HlQ">
                 <rect key="frame" x="0.0" y="0.0" width="538" height="91"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -230,12 +243,26 @@ Gw
             </view>
             <point key="canvasLocation" x="587" y="725.5"/>
         </window>
-        <customObject id="jmW-zZ-t6u" customClass="MagnetOpenController">
-            <connections>
-                <outlet property="appDelegate" destination="Voe-Tx-rLC" id="grw-aP-I0S"/>
-                <outlet property="panel" destination="0Uc-6s-VHg" id="bYM-H5-iWr"/>
-                <outlet property="textField" destination="UR1-Xy-dL9" id="7ba-8y-7wi"/>
-            </connections>
-        </customObject>
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="zzf-l0-hyd" customClass="CocoaWindow">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="207" width="640" height="480"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <view key="contentView" id="WLG-G9-FS0" customClass="RootView">
+                <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VZa-LT-4Sy">
+                        <rect key="frame" x="18" y="417" width="590" height="43"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="OSD" id="nl2-bJ-VJi">
+                            <font key="font" size="30" name=".HelveticaNeueDeskInterface-Regular"/>
+                            <color key="textColor" red="1" green="1" blue="1" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="600" y="1121"/>
+        </window>
     </objects>
 </document>

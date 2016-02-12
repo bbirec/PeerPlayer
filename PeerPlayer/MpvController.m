@@ -18,6 +18,12 @@ static inline void check_error(int status)
     }
 }
 
+#pragma mark Info
+
+@implementation PlayInfo
+
+@end
+
 #pragma mark OGLView
 
 static void *get_proc_address(void *ctx, const char *name)
@@ -148,37 +154,14 @@ static void glupdate(void *ctx)
     // window coordinate origin is bottom left
     NSRect glFrame = NSMakeRect(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
     self.glView = [[MpvClientOGLView alloc] initWithFrame:glFrame];
-    [self.contentView addSubview:self.glView];
+    [self.contentView addSubview:self.glView positioned:NSWindowBelow relativeTo:nil];
 }
-
-- (void)keyDown:(NSEvent *)event {
-    NSLog(@"Key down: %@", event);
-    
-    
-    switch(event.keyCode) {
-        case 49:
-            // Toggle pause
-            [self.controller togglePause];
-            break;
-        case 123:
-            // Seek -10
-            [self.controller seek:-10];
-            break;
-        case 124:
-            // Seek 10
-            [self.controller seek:10];
-            break;
-        default:
-            break;
-    }
-}
-
 @end
 
 
 #pragma mark MpvController
 
-
+static MpvController* _mpv;
 
 @interface MpvController(private)
 - (void) readEvents;
@@ -194,6 +177,7 @@ static void wakeup(void *context) {
 -(id) initWithWindow:(CocoaWindow*) window {
     if (self = [super init]) {
         self.window = window;
+        self.info = [[PlayInfo alloc] init];
         
         mpv = mpv_create();
         if (!mpv) {
@@ -222,6 +206,12 @@ static void wakeup(void *context) {
         }
         mpv_opengl_cb_set_update_callback(mpvGL, glupdate, (__bridge void *)window.glView);
         
+        // observe events
+        mpv_observe_property(mpv, 0, "duration", MPV_FORMAT_DOUBLE);
+        mpv_observe_property(mpv, 0, "time-pos", MPV_FORMAT_DOUBLE);
+        mpv_observe_property(mpv, 0, "demuxer-cache-duration", MPV_FORMAT_DOUBLE);
+        mpv_observe_property(mpv, 0, "pause", MPV_FORMAT_FLAG);
+        
         // Deal with MPV in the background.
         queue = dispatch_queue_create("mpv", DISPATCH_QUEUE_SERIAL);
         
@@ -229,9 +219,18 @@ static void wakeup(void *context) {
             // Register to be woken up whenever mpv generates new events.
             mpv_set_wakeup_callback(mpv, wakeup, (__bridge void *) self);
         });
+        
+        
+        // Set as singleton object
+        _mpv = self;
     }
     return self;
 
+}
+
++(MpvController*) getInstance {
+    NSAssert(_mpv != nil, @"Mpv is not initialized.");
+    return _mpv;
 }
 
 -(void) playWithUrl:(NSString*) url {
@@ -261,12 +260,43 @@ static void wakeup(void *context) {
     });
 }
 
+-(BOOL) processKey:(NSEvent*) event {
+    switch(event.keyCode) {
+        case 49:
+            // Toggle pause
+            [self togglePause];
+            return YES;
+        case 123:
+            // Seek -10
+            [self seek:-10];
+            return YES;
+        case 124:
+            // Seek 10
+            [self seek:10];
+            return YES;
+    }
+    
+    return NO;
+}
+
 -(void) seek:(int)seconds {
     dispatch_async(queue, ^{
         // Load the indicated file
         const char* sec = [[NSString stringWithFormat:@"%d", seconds] UTF8String];
         const char *cmd[] = {"seek", sec, NULL};
         check_error(mpv_command(mpv, cmd));
+        
+        // Load time info
+        double duration;
+        check_error(mpv_get_property(mpv, "duration", MPV_FORMAT_DOUBLE, &duration));
+        
+        double timePos;
+        check_error(mpv_get_property(mpv, "time-pos", MPV_FORMAT_DOUBLE, &timePos));
+        
+        double cacheRemaining;
+        check_error(mpv_get_property(mpv, "demuxer-cache-duration", MPV_FORMAT_DOUBLE, &cacheRemaining));
+        
+        NSLog(@"%f / %f : cache=%f", timePos, duration, cacheRemaining);
     });
 }
 
@@ -280,26 +310,35 @@ static void wakeup(void *context) {
     });
 }
 
--(void) handleEvent:(mpv_event *)event
-{
-    switch (event->event_id) {
-        case MPV_EVENT_SHUTDOWN: {
-            mpv_detach_destroy(mpv);
-            mpv = NULL;
-            printf("event: shutdown\n");
-            break;
-        }
-            
-        case MPV_EVENT_LOG_MESSAGE: {
-            struct mpv_event_log_message *msg = (struct mpv_event_log_message *)event->data;
-            printf("[%s] %s: %s", msg->prefix, msg->level, msg->text);
-        }
-            
-        default:
-            printf("event: %s\n", mpv_event_name(event->event_id));
-    }
+-(void) playInfoChanged {
+    [[NSNotificationCenter defaultCenter] postNotificationName:kPPPlayInfoChanged
+                                                        object:self
+                                                      userInfo:[NSDictionary dictionaryWithObject:self.info forKey:kPPPlayInfoKey]];
+
 }
 
+// Update the play info
+// This function may be called from mpv thread, so the functions manipulating UI functions should be performed on the main thread.
+-(void) updateInfo:(mpv_event_property*) prop {
+    if (strcmp(prop->name, "time-pos") == 0) {
+        if (prop->format == MPV_FORMAT_DOUBLE) {
+            self.info.timePos = *(double *)prop->data;
+            [self performSelectorOnMainThread:@selector(playInfoChanged) withObject:nil waitUntilDone:NO];
+        }
+    }
+    else if (strcmp(prop->name, "duration") == 0) {
+        if (prop->format == MPV_FORMAT_DOUBLE) {
+            self.info.duration = *(double *)prop->data;
+            [self performSelectorOnMainThread:@selector(playInfoChanged) withObject:nil waitUntilDone:NO];
+        }
+    }
+    else if(strcmp(prop->name, "pause") == 0) {
+        if (prop->format == MPV_FORMAT_FLAG) {
+            self.info.paused = *(int *)prop->data;
+            [self performSelectorOnMainThread:@selector(playInfoChanged) withObject:nil waitUntilDone:NO];
+        }
+    }
+}
 
 - (void) readEvents
 {
@@ -308,7 +347,27 @@ static void wakeup(void *context) {
             mpv_event *event = mpv_wait_event(mpv, 0);
             if (event->event_id == MPV_EVENT_NONE)
                 break;
-            [self handleEvent:event];
+
+            switch (event->event_id) {
+                case MPV_EVENT_SHUTDOWN: {
+                    mpv_detach_destroy(mpv);
+                    mpv = NULL;
+                    printf("event: shutdown\n");
+                    break;
+                }
+                case MPV_EVENT_PROPERTY_CHANGE: {
+                    mpv_event_property *prop = (mpv_event_property *)event->data;
+                    [self updateInfo:prop];
+                    break;
+                }
+                case MPV_EVENT_LOG_MESSAGE: {
+                    struct mpv_event_log_message *msg = (struct mpv_event_log_message *)event->data;
+                    printf("[%s] %s: %s", msg->prefix, msg->level, msg->text);
+                }
+                    
+                default:
+                    printf("event: %s\n", mpv_event_name(event->event_id));
+            }
         }
     });
 }

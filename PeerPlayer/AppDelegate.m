@@ -74,10 +74,7 @@
     NSMiniaturizableWindowMask|NSResizableWindowMask|
     NSFullSizeContentViewWindowMask|NSUnifiedTitleAndToolbarWindowMask;
     
-    self.window = [[CocoaWindow alloc] initWithContentRect:NSMakeRect(0,0, 640, 480)
-                                                 styleMask:mask
-                                                   backing:NSBackingStoreBuffered
-                                                     defer:NO];
+    [self.window setStyleMask:mask];
     [self.window setMinSize:NSMakeSize(200, 200)];
     [self.window initOGLView];
     [self.window setStyleMask:mask];
@@ -92,8 +89,6 @@
     
     // Initialize Mpv Controller.
     self.mpv = [[MpvController alloc] initWithWindow:self.window];
-    
-    self.window.controller = self.mpv;
     
     [NSApp activateIgnoringOtherApps:YES];
 }
