@@ -9,5 +9,10 @@
 #import <Cocoa/Cocoa.h>
 
 int main(int argc, const char * argv[]) {
+    // Ignore SIGPIPE signal globally.
+    // In order to ignore SIGPIPE on debug, add ~/.lldbinit file with following:
+    // process handle SIGPIPE -n true -p true -s false
+    signal(SIGPIPE, SIG_IGN);
+    
     return NSApplicationMain(argc, argv);
 }

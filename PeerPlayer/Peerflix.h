@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRWebSocket.h"
 
 @protocol PeerflixDelegate <NSObject>
 
@@ -18,13 +17,11 @@
 
 
 
-@interface Peerflix : NSObject<SRWebSocketDelegate>
+@interface Peerflix : NSObject
 
 @property (strong) id<PeerflixDelegate> delegate;
-@property (strong) SRWebSocket* socket;
 
-// Kill the existing peerflix process
-+(void) kill;
+-(void) initialize;
 
 // Download torrent file
 -(void) downloadTorrent:(NSString*)pathOrMagnet;

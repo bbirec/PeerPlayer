@@ -39,7 +39,9 @@
     NSLog(@"Largest Filename: %@", filename);
     
     if(targetHash != nil) {
-        [self.mpv playWithUrl:[self.peerflix streamUrlFromHash:targetHash]];
+        NSString* url = [self.peerflix streamUrlFromHash:targetHash];
+        NSLog(@"URL: %@", url);
+        [self.mpv playWithUrl:url];
     }
     else {
         NSLog(@"Nothing to play");
@@ -94,6 +96,7 @@
 }
 
 
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
     atexit_b(^{
@@ -103,13 +106,11 @@
         [NSApp setActivationPolicy:NSApplicationActivationPolicyProhibited];
     });
     
-    // Clean existing peerflix
-    [Peerflix kill];
-    
     // Init main window
     [self createWindow];
     self.peerflix = [[Peerflix alloc] init];
     self.peerflix.delegate = self;
+    [self.peerflix initialize];
     
     [self updateTorrentMenu];
 }
@@ -123,7 +124,6 @@
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
     [self.mpv quit];
-    [Peerflix kill];
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {
