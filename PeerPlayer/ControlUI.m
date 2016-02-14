@@ -25,9 +25,6 @@
     return self;
 }
 
--(void) awakeFromNib {
-    [self initCenterMsg];
-}
 
 +(NSString*) formatTime:(NSInteger)time {
     NSInteger hour, minute, sec;
@@ -76,20 +73,23 @@
         self.osd.hidden = YES;
         self.centerMsg.hidden = NO;
         
-        BOOL ready = [[self.torrentStatus objectForKey:@"Ready"] boolValue];
-        
-        if(self.torrentStatus && !ready) {
-            self.centerMsg.stringValue = @"Loading torrent file..";
-        }
-        else if(self.torrentStatus && ready) {
-            if(self.playInfo.startFile) {
-                self.centerMsg.stringValue = @"Starting video..";
+        if(self.torrentStatus) {
+            BOOL ready = [[self.torrentStatus objectForKey:@"Ready"] boolValue];
+            if(ready) {
+                if(self.playInfo.startFile) {
+                    self.centerMsg.stringValue = @"Starting video..";
+                }
+                else {
+                    self.centerMsg.stringValue = @"Select Video";
+                }
             }
             else {
-                self.centerMsg.stringValue = @"Select Video";
+                self.centerMsg.stringValue = @"Loading torrent file..";
             }
         }
-        
+        else {
+            self.centerMsg.stringValue = @"Drop .torrent file";
+        }
     }
     
 
@@ -106,12 +106,6 @@
 -(void) torrentStatusChanged:(NSNotification*) notification {
     self.torrentStatus = notification.userInfo;
     [self updateUI];
-}
-
-#pragma mark Center msg
-
--(void) initCenterMsg {
-    self.centerMsg.stringValue = @"Drop .torrent file";
 }
 
 

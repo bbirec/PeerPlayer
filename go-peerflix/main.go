@@ -105,7 +105,8 @@ func NewTorrent(torrentPath string, readyCallback unsafe.Pointer) {
 func GetStatus() string {
 	err, status := client.GetStatusJson()
 	if err != nil {
-		return ""
+		log.Println("Failed to get status json", err)
+		return "{}"
 	}
 
 	log.Printf("Status: %s\n", status)

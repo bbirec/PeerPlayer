@@ -240,6 +240,9 @@ static void wakeup(void *context) {
         // Load the indicated file
         const char *cmd[] = {"loadfile", url.UTF8String, NULL};
         check_error(mpv_command(mpv, cmd));
+        
+        int pause = 0;
+        mpv_set_property(mpv, "pause", MPV_FORMAT_FLAG, (void*)&pause);
     });
 }
 

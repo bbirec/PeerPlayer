@@ -54,7 +54,9 @@ void statusCb(char* status);
 
 -(NSDictionary*) getStatus {
     GoString str = GetStatus();
-    NSString* statusJson = [NSString stringWithUTF8String:str.p];
+    char* p = strndup(str.p, str.n);
+    NSString* statusJson = [NSString stringWithUTF8String:p];
+    free(p);
     
     return [self parseStatus:statusJson];
 }
