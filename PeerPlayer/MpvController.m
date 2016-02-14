@@ -220,6 +220,8 @@ static void wakeup(void *context) {
             mpv_set_wakeup_callback(mpv, wakeup, (__bridge void *) self);
         });
         
+        // Disable power management
+        [self disablePowerManagement];
         
         // Set as singleton object
         _mpv = self;
@@ -386,5 +388,30 @@ static void wakeup(void *context) {
         }
     });
 }
+
+#pragma mark Power Management
+
+-(void) enablePowerManagement {
+    if (nonSleepHandler != kIOPMNullAssertionID) {
+        IOPMAssertionRelease(nonSleepHandler);
+        nonSleepHandler = kIOPMNullAssertionID;
+    }	
+
+}
+
+-(void) disablePowerManagement {
+    if(nonSleepHandler == kIOPMNullAssertionID) {
+        IOReturn err = IOPMAssertionCreateWithName(
+                                    kIOPMAssertPreventUserIdleDisplaySleep,
+                                    kIOPMAssertionLevelOn,
+                                    (__bridge CFStringRef)@"PeerPlayer is playing.",
+                                    &nonSleepHandler);
+        if(err != kIOReturnSuccess) {
+            NSLog(@"Can't disable powersave");
+        }
+    }
+    
+}
+
 
 @end

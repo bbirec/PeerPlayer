@@ -10,7 +10,7 @@
 #import <OpenGL/gl.h>
 #import <mpv/client.h>
 #import <mpv/opengl_cb.h>
-
+#import <IOKit/pwr_mgt/IOPMLib.h>
 
 
 @interface PlayInfo : NSObject
@@ -48,6 +48,7 @@
 @interface MpvController : NSObject {
     mpv_handle *mpv;
     dispatch_queue_t queue;
+    IOPMAssertionID nonSleepHandler;
 }
 
 @property (strong) CocoaWindow* window;
