@@ -67,7 +67,6 @@
 
 
 -(void) torrentStatusChanged:(NSDictionary*) info {
-     NSLog(@"Got status: %@", info);
     [[NSNotificationCenter defaultCenter] postNotificationName:kPPTorrentStatusChanged
                                                         object:self
                                                       userInfo:info];
@@ -175,6 +174,10 @@
         [self playTorrent:fileUrl];
     }
 
+}
+
+-(IBAction) stopCurrentVideo:(id)sender {
+    [self.mpv stop];
 }
 
 @end

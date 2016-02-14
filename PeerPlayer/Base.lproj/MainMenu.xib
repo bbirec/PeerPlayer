@@ -104,6 +104,11 @@
                                     </items>
                                 </menu>
                             </menuItem>
+                            <menuItem title="Stop Video" keyEquivalent="w" id="gA3-Gt-4Pj">
+                                <connections>
+                                    <action selector="stopCurrentVideo:" target="Voe-Tx-rLC" id="d8U-iE-eRj"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>

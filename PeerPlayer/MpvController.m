@@ -220,8 +220,6 @@ static void wakeup(void *context) {
             mpv_set_wakeup_callback(mpv, wakeup, (__bridge void *) self);
         });
         
-        // Disable power management
-        [self disablePowerManagement];
         
         // Set as singleton object
         _mpv = self;
@@ -237,7 +235,6 @@ static void wakeup(void *context) {
 
 -(void) playWithUrl:(NSString*) url {
     NSLog(@"play url: %@", url);
-    
     // Deal with MPV in the background.
     dispatch_async(queue, ^{
         // Load the indicated file
@@ -365,7 +362,12 @@ static void wakeup(void *context) {
                 case MPV_EVENT_START_FILE: {
                     printf("event: %s\n", mpv_event_name(event->event_id));
                     self.info.startFile = YES;
+                    self.info.loadFile = NO;
                     [self playInfoChanged];
+                    
+                    
+                    // Disable power management
+                    [self disablePowerManagement];
                     break;
                 }
                 case MPV_EVENT_END_FILE: {
@@ -373,6 +375,9 @@ static void wakeup(void *context) {
                     self.info.startFile = NO;
                     self.info.loadFile = NO;
                     [self playInfoChanged];
+                    
+                    // Enable power management
+                    [self enablePowerManagement];
                     break;
                 }
                 case MPV_EVENT_FILE_LOADED: {
@@ -382,8 +387,9 @@ static void wakeup(void *context) {
                     break;
                 }
                     
-                default:
-                    printf("event: %s\n", mpv_event_name(event->event_id));
+                default:{
+                    //printf("event: %s\n", mpv_event_name(event->event_id));
+                }
             }
         }
     });

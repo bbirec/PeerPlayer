@@ -76,12 +76,20 @@
         self.osd.hidden = YES;
         self.centerMsg.hidden = NO;
         
-        if(self.torrentStatus && ![[self.torrentStatus objectForKey:@"Ready"] boolValue]) {
+        BOOL ready = [[self.torrentStatus objectForKey:@"Ready"] boolValue];
+        
+        if(self.torrentStatus && !ready) {
             self.centerMsg.stringValue = @"Loading torrent file..";
         }
-        else if(self.playInfo.startFile) {
-            self.centerMsg.stringValue = @"Starting video..";
+        else if(self.torrentStatus && ready) {
+            if(self.playInfo.startFile) {
+                self.centerMsg.stringValue = @"Starting video..";
+            }
+            else {
+                self.centerMsg.stringValue = @"Select Video";
+            }
         }
+        
     }
     
 
