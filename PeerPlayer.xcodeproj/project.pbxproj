@@ -34,8 +34,8 @@
 		CD67EA3F1C6E58BF0061BA00 /* RootView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootView.m; sourceTree = "<group>"; };
 		CD67EA461C6FDC440061BA00 /* go-peerflix.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "go-peerflix.a"; path = "go-peerflix/go-peerflix.a"; sourceTree = "<group>"; };
 		CD67EA471C6FDC440061BA00 /* go-peerflix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "go-peerflix.h"; path = "go-peerflix/go-peerflix.h"; sourceTree = "<group>"; };
-		CD724E211C6A311000F931C0 /* MpvController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MpvController.h; path = PeerPlayer/MpvController.h; sourceTree = "<group>"; };
-		CD724E221C6A311000F931C0 /* MpvController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MpvController.m; path = PeerPlayer/MpvController.m; sourceTree = "<group>"; };
+		CD724E211C6A311000F931C0 /* MpvController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MpvController.h; sourceTree = "<group>"; };
+		CD724E221C6A311000F931C0 /* MpvController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MpvController.m; sourceTree = "<group>"; };
 		CD724E241C6A35B100F931C0 /* Peerflix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Peerflix.h; sourceTree = "<group>"; };
 		CD724E251C6A35B100F931C0 /* Peerflix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Peerflix.m; sourceTree = "<group>"; };
 		CD724E281C6AF27B00F931C0 /* PeerPlayer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = PeerPlayer.icns; sourceTree = "<group>"; };
@@ -79,6 +79,7 @@
 				CD724E201C6A2DFB00F931C0 /* Controllers */,
 				CD67EA421C6E5DD40061BA00 /* View */,
 				CD67EA411C6E5DAD0061BA00 /* Torrent */,
+				CD3AE43E1C70DF2600960E72 /* Player */,
 				CD724E271C6AF27B00F931C0 /* Icons */,
 				CD0C46231C67475D003910DF /* AppDelegate.h */,
 				CD0C46241C67475D003910DF /* AppDelegate.m */,
@@ -96,6 +97,15 @@
 				CD0C46271C67475D003910DF /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CD3AE43E1C70DF2600960E72 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				CD724E211C6A311000F931C0 /* MpvController.h */,
+				CD724E221C6A311000F931C0 /* MpvController.m */,
+			);
+			name = Player;
 			sourceTree = "<group>";
 		};
 		CD67EA411C6E5DAD0061BA00 /* Torrent */ = {
@@ -119,8 +129,6 @@
 		CD724E201C6A2DFB00F931C0 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				CD724E211C6A311000F931C0 /* MpvController.h */,
-				CD724E221C6A311000F931C0 /* MpvController.m */,
 				CD791E7B1C69A3080098F7C3 /* MagnetOpenController.h */,
 				CD791E7C1C69A3080098F7C3 /* MagnetOpenController.m */,
 				CD67EA3B1C6E54C20061BA00 /* ControlUI.h */,

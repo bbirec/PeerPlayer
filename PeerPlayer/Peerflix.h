@@ -8,9 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+
 @protocol PeerflixDelegate <NSObject>
 
 -(void) torrentReady:(NSDictionary*)data;
+-(void) torrentStatusChanged:(NSDictionary*) info;
 
 @end
 

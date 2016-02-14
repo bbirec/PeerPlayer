@@ -11,20 +11,20 @@
 
 static Peerflix* _instance;
 
+void readyCb(int ready);
+void statusCb(char* status);
+
+
 @implementation Peerflix
 
 -(void) initialize {
     _instance = self;
     
     // Initilize peerflix
-    Init();
+    Init(&statusCb);
 }
 
--(NSDictionary*) getStatus {
-    GoString str = GetStatus();
-    NSString* statusJson = [NSString stringWithUTF8String:str.p];
-    
-    NSLog(@"Get status:%@", statusJson);
+-(NSDictionary*) parseStatus:(NSString*) statusJson {
     NSData* data = [statusJson dataUsingEncoding:NSUTF8StringEncoding];
     
     NSError *error = nil;
@@ -41,7 +41,7 @@ static Peerflix* _instance;
     if([object isKindOfClass:[NSDictionary class]])
     {
         NSDictionary *dict = object;
-
+        
         return dict;
     }
     else
@@ -52,23 +52,41 @@ static Peerflix* _instance;
     }
 }
 
--(void) torrentReady {
-    if(self.delegate) {
-        NSDictionary* status = [self getStatus];
-        NSLog(@"%@", status);
-        [self.delegate torrentReady:status];
-    }
+-(NSDictionary*) getStatus {
+    GoString str = GetStatus();
+    NSString* statusJson = [NSString stringWithUTF8String:str.p];
+    
+    return [self parseStatus:statusJson];
 }
 
-#pragma mark Torrent
 
 void readyCb(int ready) {
-    NSLog(@"Ready cb: %d", ready);
-    
     [_instance performSelectorOnMainThread:@selector(torrentReady)
                                 withObject:nil
                              waitUntilDone:NO];
 }
+
+void statusCb(char* status) {
+    NSString* statusJson = [NSString stringWithUTF8String:status];
+    [_instance performSelectorOnMainThread:@selector(torrentStatus:)
+                                withObject:statusJson
+                             waitUntilDone:NO];
+}
+
+
+
+-(void) torrentReady {
+    if(self.delegate) {
+        NSDictionary* status = [self getStatus];
+        [self.delegate torrentReady:status];
+    }
+}
+
+-(void) torrentStatus:(NSString*) statusJson {
+    [self.delegate torrentStatusChanged:[self parseStatus:statusJson]];
+}
+
+#pragma mark Torrent
 
 -(void) downloadTorrent:(NSString*)pathOrMagnet {
     GoString path;
@@ -83,3 +101,5 @@ void readyCb(int ready) {
 }
 
 @end
+
+

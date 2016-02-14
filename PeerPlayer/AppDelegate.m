@@ -17,6 +17,23 @@
     [self.peerflix downloadTorrent:url];
 }
 
+-(void) updateTorrentMenu {
+    [self.torrentMenu removeAllItems];
+    NSArray* files = [self.currentFiles objectForKey:@"Files"];
+    for(NSDictionary* dict in files) {
+        NSString* filename = [dict objectForKey:@"Filename"];
+        
+        NSMenuItem* item = [[NSMenuItem alloc] initWithTitle:filename
+                                                      action:@selector(torrentMenuItemAction:)
+                                               keyEquivalent:@""];
+        item.representedObject = dict;
+        [self.torrentMenu addItem:item];
+    }
+}
+
+#pragma mark Peerflix Delegate
+
+
 -(void) torrentReady:(NSDictionary*)data {
     self.currentFiles = data;
     [self updateTorrentMenu];
@@ -48,27 +65,25 @@
     }
 }
 
--(void) updateTorrentMenu {
-    [self.torrentMenu removeAllItems];
-    NSArray* files = [self.currentFiles objectForKey:@"Files"];
-    for(NSDictionary* dict in files) {
-        NSString* filename = [dict objectForKey:@"Filename"];
-        
-        NSMenuItem* item = [[NSMenuItem alloc] initWithTitle:filename
-                                                      action:@selector(torrentMenuItemAction:)
-                                               keyEquivalent:@""];
-        item.representedObject = dict;
-        [self.torrentMenu addItem:item];
-    }
+
+-(void) torrentStatusChanged:(NSDictionary*) info {
+     NSLog(@"Got status: %@", info);
+    [[NSNotificationCenter defaultCenter] postNotificationName:kPPTorrentStatusChanged
+                                                        object:self
+                                                      userInfo:info];
 }
 
--(void) torrentMenuItemAction:(id) sender {
-    NSDictionary* dict = [sender representedObject];
-    NSString* hash = [dict objectForKey:@"Hash"];
-    NSLog(@"Selected hash: %@", hash);
-    [self.mpv playWithUrl:[self.peerflix streamUrlFromHash:hash]];
+
+#pragma mark Player Delegate
+
+-(void) playInfoChanged:(PlayInfo *)info {
+    [[NSNotificationCenter defaultCenter] postNotificationName:kPPPlayInfoChanged
+                                                        object:self
+                                                      userInfo:[NSDictionary dictionaryWithObject:info forKey:kPPPlayInfoKey]];
+
 }
 
+#pragma mark App Delegate
 
 -(void) createWindow {
     // Style the window and prepare for mpv player.
@@ -89,9 +104,6 @@
     [self.window setTitleVisibility:NSWindowTitleHidden];
     [self.window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
     
-    // Initialize Mpv Controller.
-    self.mpv = [[MpvController alloc] initWithWindow:self.window];
-    
     [NSApp activateIgnoringOtherApps:YES];
 }
 
@@ -108,6 +120,12 @@
     
     // Init main window
     [self createWindow];
+    
+    // Initialize Mpv Controller.
+    self.mpv = [[MpvController alloc] initWithWindow:self.window];
+    self.mpv.delegate = self;
+    
+    // Initialize Peerflix
     self.peerflix = [[Peerflix alloc] init];
     self.peerflix.delegate = self;
     [self.peerflix initialize];
@@ -132,6 +150,15 @@
 
 
 #pragma mark IBActions
+
+
+-(void) torrentMenuItemAction:(id) sender {
+    NSDictionary* dict = [sender representedObject];
+    NSString* hash = [dict objectForKey:@"Hash"];
+    NSLog(@"Selected hash: %@", hash);
+    [self.mpv playWithUrl:[self.peerflix streamUrlFromHash:hash]];
+}
+
 
 -(IBAction) openTorrentFile:(id)sender {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];

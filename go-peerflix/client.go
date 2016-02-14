@@ -26,21 +26,14 @@ func (clientError ClientError) Error() string {
 	return fmt.Sprintf("Error %s: %s\n", clientError.Type, clientError.Origin)
 }
 
-type FileStatus struct {
-	Filename  string
-	Hash      string
-	Size      int64
-	Completed bool
-}
-
-type ClientStatus struct {
-	Files []*FileStatus
-}
-
 // Client manages the torrent downloading.
 type Client struct {
 	Client         *torrent.Client
 	downloadFolder string
+
+	// Maintain one torrent file at a time
+	Ready       bool
+	TorrentPath string
 }
 
 // Return md5 hash of a string
@@ -69,6 +62,8 @@ func NewClient(downloadFolder string) (*Client, error) {
 
 func (c *Client) NewTorrent(torrentPath string) (error, chan bool) {
 	c.DropTorrent()
+	c.Ready = false
+	c.TorrentPath = torrentPath
 
 	readyChan := make(chan bool)
 
@@ -98,6 +93,8 @@ func (c *Client) NewTorrent(torrentPath string) (error, chan bool) {
 		// Wait for the torrent info and start to download immediately
 		<-t.GotInfo()
 		t.DownloadAll()
+
+		c.Ready = true
 
 		// Publish torrent info
 		readyChan <- true
@@ -145,7 +142,9 @@ func (c Client) getFileFromHash(hash string) (*torrent.File, error) {
 
 // GetFile is an http handler to serve file indentified by md5 hash of file path.
 func (c Client) GetFile(w http.ResponseWriter, r *http.Request) {
-	log.Println("Get file: ", r.Method, r.Header)
+	if r.Method == "HEAD" {
+		return
+	}
 
 	hash := r.FormValue("hash")
 
@@ -162,7 +161,6 @@ func (c Client) GetFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	defer func() {
-		log.Println("Closing reader")
 		if err := entry.Close(); err != nil {
 			log.Printf("Error closing file reader: %s\n", err)
 		}
@@ -199,6 +197,11 @@ func (c *Client) GetStatusJson() (error, string) {
 			Hash:      md5Hash(file.Path()),
 		}
 	}
+
+	status.BytesCompleted = t.BytesCompleted()
+	status.BytesTotal = t.Length()
+	status.Ready = c.Ready
+	status.TorrentPath = c.TorrentPath
 
 	data, err := json.Marshal(status)
 	if err != nil {

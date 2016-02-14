@@ -9,10 +9,16 @@
 #import <Cocoa/Cocoa.h>
 
 #import "MpvController.h"
-
 #import "Peerflix.h"
 
-@interface AppDelegate : NSObject <NSApplicationDelegate, PeerflixDelegate>
+// Player
+#define kPPPlayInfoKey @"info"
+#define kPPPlayInfoChanged @"PPPlayInfoChanged"
+
+// Torrent
+#define kPPTorrentStatusChanged @"PPTorrentStatusChanged"
+
+@interface AppDelegate : NSObject <NSApplicationDelegate, PeerflixDelegate, PlayerDelegate>
 
 @property (weak) IBOutlet CocoaWindow *window;
 @property (weak) IBOutlet NSMenu* torrentMenu;

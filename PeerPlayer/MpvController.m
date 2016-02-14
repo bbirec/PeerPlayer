@@ -310,11 +310,12 @@ static void wakeup(void *context) {
     });
 }
 
--(void) playInfoChanged {
-    [[NSNotificationCenter defaultCenter] postNotificationName:kPPPlayInfoChanged
-                                                        object:self
-                                                      userInfo:[NSDictionary dictionaryWithObject:self.info forKey:kPPPlayInfoKey]];
+-(void) _playInfoChanged {
+    [self.delegate playInfoChanged:self.info];
+}
 
+-(void) playInfoChanged {
+    [self performSelectorOnMainThread:@selector(_playInfoChanged) withObject:nil waitUntilDone:NO];
 }
 
 // Update the play info
@@ -323,19 +324,19 @@ static void wakeup(void *context) {
     if (strcmp(prop->name, "time-pos") == 0) {
         if (prop->format == MPV_FORMAT_DOUBLE) {
             self.info.timePos = *(double *)prop->data;
-            [self performSelectorOnMainThread:@selector(playInfoChanged) withObject:nil waitUntilDone:NO];
+            [self playInfoChanged];
         }
     }
     else if (strcmp(prop->name, "duration") == 0) {
         if (prop->format == MPV_FORMAT_DOUBLE) {
             self.info.duration = *(double *)prop->data;
-            [self performSelectorOnMainThread:@selector(playInfoChanged) withObject:nil waitUntilDone:NO];
+            [self playInfoChanged];
         }
     }
     else if(strcmp(prop->name, "pause") == 0) {
         if (prop->format == MPV_FORMAT_FLAG) {
             self.info.paused = *(int *)prop->data;
-            [self performSelectorOnMainThread:@selector(playInfoChanged) withObject:nil waitUntilDone:NO];
+            [self playInfoChanged];
         }
     }
 }
@@ -363,6 +364,26 @@ static void wakeup(void *context) {
                 case MPV_EVENT_LOG_MESSAGE: {
                     struct mpv_event_log_message *msg = (struct mpv_event_log_message *)event->data;
                     printf("[%s] %s: %s", msg->prefix, msg->level, msg->text);
+                    break;
+                }
+                case MPV_EVENT_START_FILE: {
+                    printf("event: %s\n", mpv_event_name(event->event_id));
+                    self.info.startFile = YES;
+                    [self playInfoChanged];
+                    break;
+                }
+                case MPV_EVENT_END_FILE: {
+                    printf("event: %s\n", mpv_event_name(event->event_id));
+                    self.info.startFile = NO;
+                    self.info.loadFile = NO;
+                    [self playInfoChanged];
+                    break;
+                }
+                case MPV_EVENT_FILE_LOADED: {
+                    printf("event: %s\n", mpv_event_name(event->event_id));
+                    self.info.loadFile = YES;
+                    [self playInfoChanged];
+                    break;
                 }
                     
                 default:

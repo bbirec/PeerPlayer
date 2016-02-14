@@ -1,16 +1,24 @@
 package main
 
 /*
+#include <stdlib.h>
 typedef void (*callback_ready)(int);
 static inline void CallbackReady(void* ptr, int ready) {
 	if(ptr != 0) {
 		((void (*)(int))ptr)(ready);
 	}
 }
+typedef void (*callback_status)(char*);
+static inline void CallbackStatus(void* ptr, char* status) {
+	if(ptr != 0) {
+		((void (*)(char*))ptr)(status);
+	}
+}
 */
 import "C"
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -32,7 +40,7 @@ const (
 var client *Client
 
 //export Init
-func Init() {
+func Init(statusCallback unsafe.Pointer) {
 	var err error
 	folder := os.TempDir()
 	port := 8000
@@ -45,6 +53,22 @@ func Init() {
 	log.Printf("Downloading on %s\n", folder)
 
 	go func() {
+		for {
+			// Send status every seconds
+			err, status := client.GetStatusJson()
+			if err != nil {
+				continue
+			}
+
+			statusC := C.CString(status)
+			C.CallbackStatus(statusCallback, statusC)
+			C.free(unsafe.Pointer(statusC))
+
+			time.Sleep(time.Second)
+		}
+	}()
+
+	go func() {
 		log.Printf("Listening on port %d\n", port)
 		http.HandleFunc("/", client.GetFile)
 		log.Fatal(http.ListenAndServe(":"+strconv.Itoa(port), nil))
@@ -54,7 +78,9 @@ func Init() {
 //export NewTorrent
 func NewTorrent(torrentPath string, readyCallback unsafe.Pointer) {
 	log.Printf("New torrent: %s\n", torrentPath)
-	err, readyChan := client.NewTorrent(torrentPath)
+
+	// Copy torrentPath string due to abnormal behaviour
+	err, readyChan := client.NewTorrent(fmt.Sprint(torrentPath))
 	if err != nil {
 		log.Println(err)
 	}
@@ -89,7 +115,7 @@ func GetStatus() string {
 
 func main() {
 	// Empty
-	Init()
+	Init(nil)
 	NewTorrent("/Users/bbirec/tmp/es.torrent", nil)
 	GetStatus()
 

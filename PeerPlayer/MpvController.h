@@ -11,10 +11,12 @@
 #import <mpv/client.h>
 #import <mpv/opengl_cb.h>
 
-#define kPPPlayInfoKey @"info"
-#define kPPPlayInfoChanged @"PPPlayInfoChanged"
+
 
 @interface PlayInfo : NSObject
+
+@property BOOL startFile;
+@property BOOL loadFile;
 
 @property double duration; // in seconds
 @property double timePos; // in seconds
@@ -36,6 +38,12 @@
 @end
 
 
+@protocol PlayerDelegate <NSObject>
+-(void) playInfoChanged:(PlayInfo*) info;
+@end
+
+
+
 @interface MpvController : NSObject {
     mpv_handle *mpv;
     dispatch_queue_t queue;
@@ -43,6 +51,7 @@
 
 @property (strong) CocoaWindow* window;
 @property (strong) PlayInfo* info;
+@property (strong) id<PlayerDelegate> delegate;
 
 +(MpvController*) getInstance;
 
