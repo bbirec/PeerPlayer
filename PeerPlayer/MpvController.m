@@ -285,18 +285,6 @@ static void wakeup(void *context) {
         const char* sec = [[NSString stringWithFormat:@"%d", seconds] UTF8String];
         const char *cmd[] = {"seek", sec, NULL};
         check_error(mpv_command(mpv, cmd));
-        
-        // Load time info
-        double duration;
-        check_error(mpv_get_property(mpv, "duration", MPV_FORMAT_DOUBLE, &duration));
-        
-        double timePos;
-        check_error(mpv_get_property(mpv, "time-pos", MPV_FORMAT_DOUBLE, &timePos));
-        
-        double cacheRemaining;
-        check_error(mpv_get_property(mpv, "demuxer-cache-duration", MPV_FORMAT_DOUBLE, &cacheRemaining));
-        
-        NSLog(@"%f / %f : cache=%f", timePos, duration, cacheRemaining);
     });
 }
 
@@ -336,6 +324,12 @@ static void wakeup(void *context) {
     else if(strcmp(prop->name, "pause") == 0) {
         if (prop->format == MPV_FORMAT_FLAG) {
             self.info.paused = *(int *)prop->data;
+            [self playInfoChanged];
+        }
+    }
+    else if(strcmp(prop->name, "demuxer-cache-duration") == 0) {
+        if (prop->format == MPV_FORMAT_DOUBLE) {
+            self.info.cacheDuration = *(double *)prop->data;
             [self playInfoChanged];
         }
     }

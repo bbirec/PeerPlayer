@@ -20,6 +20,7 @@
 
 @property double duration; // in seconds
 @property double timePos; // in seconds
+@property double cacheDuration; // in seconds
 @property BOOL paused;
 
 @end

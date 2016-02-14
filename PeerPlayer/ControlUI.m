@@ -54,18 +54,30 @@
         self.osd.hidden = NO;
         self.centerMsg.hidden = YES;
         
+        NSString* cache;
+        if(self.playInfo.cacheDuration == 0) {
+            cache = @"(Buffering...)";
+        }
+        else if(self.playInfo.cacheDuration < 5.f) {
+            cache = [NSString stringWithFormat:@"(+%.1fsec)", self.playInfo.cacheDuration];
+        }
+        else {
+            cache = @"";
+        }
+        
         [self.osd setStringValue:
-         [NSString stringWithFormat:@"%@ %@/%@",
+         [NSString stringWithFormat:@"%@ %@/%@ %@",
           self.playInfo.paused ? @"Paused":@"Playing",
           [ControlUI formatTime:self.playInfo.timePos],
-          [ControlUI formatTime:self.playInfo.duration]]];
+          [ControlUI formatTime:self.playInfo.duration],
+          cache]];
     }
     else {
         self.osd.hidden = YES;
         self.centerMsg.hidden = NO;
         
         if(self.torrentStatus && ![[self.torrentStatus objectForKey:@"Ready"] boolValue]) {
-            self.centerMsg.stringValue = @"Loading magnet link..";
+            self.centerMsg.stringValue = @"Loading torrent file..";
         }
         else if(self.playInfo.startFile) {
             self.centerMsg.stringValue = @"Starting video..";
