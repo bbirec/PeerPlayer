@@ -156,6 +156,7 @@
 				CD0C461C1C67475D003910DF /* Sources */,
 				CD0C461D1C67475D003910DF /* Frameworks */,
 				CD0C461E1C67475D003910DF /* Resources */,
+				CDC7FD981C71C1E20038C284 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -210,6 +211,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		CDC7FD981C71C1E20038C284 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "dylibbundler -od -b -x $BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH -d $BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/libs/ -p @executable_path/../libs/";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CD0C461C1C67475D003910DF /* Sources */ = {
@@ -324,23 +341,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
-					/usr/local/Cellar/zeromq405/4.0.5/include,
-				);
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_FILE = PeerPlayer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/lib,
-					/usr/local/Cellar/zeromq405/4.0.5/lib,
-					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/go-peerflix",
 				);
-				OTHER_LDFLAGS = (
-					"-lmpv",
-					"-lzmq",
-				);
+				OTHER_LDFLAGS = "-lmpv";
 				PRODUCT_BUNDLE_IDENTIFIER = com.hackerstalk.peerplayer.PeerPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -351,23 +360,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
-					/usr/local/Cellar/zeromq405/4.0.5/include,
-				);
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_FILE = PeerPlayer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/lib,
-					/usr/local/Cellar/zeromq405/4.0.5/lib,
-					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/go-peerflix",
 				);
-				OTHER_LDFLAGS = (
-					"-lmpv",
-					"-lzmq",
-				);
+				OTHER_LDFLAGS = "-lmpv";
 				PRODUCT_BUNDLE_IDENTIFIER = com.hackerstalk.peerplayer.PeerPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
