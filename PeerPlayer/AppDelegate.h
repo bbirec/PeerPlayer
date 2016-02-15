@@ -20,6 +20,8 @@
 
 @interface AppDelegate : NSObject <NSApplicationDelegate, PeerflixDelegate, PlayerDelegate>
 
+@property BOOL initialized;
+
 @property (weak) IBOutlet CocoaWindow *window;
 @property (weak) IBOutlet NSMenu* torrentMenu;
 

@@ -106,16 +106,13 @@
     [NSApp activateIgnoringOtherApps:YES];
 }
 
-
-
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
-    atexit_b(^{
-        // Because activation policy has just been set to behave like a real
-        // application, that policy must be reset on exit to prevent, among
-        // other things, the menubar created here from remaining on screen.
-        [NSApp setActivationPolicy:NSApplicationActivationPolicyProhibited];
-    });
+-(void) initApp {
+    if(self.initialized) {
+        return;
+    }
+    self.initialized = YES;
+    
+    NSLog(@"Init PeerPlayer");
     
     // Init main window
     [self createWindow];
@@ -130,14 +127,47 @@
     [self.peerflix initialize];
     
     [self updateTorrentMenu];
+    
+    // Register magnet link
+    if(![self registerMagnet]){
+        NSLog(@"Failed to associate the magnet url scheme as default.");
+    }
+    
+}
+
+-(BOOL) registerMagnet {
+    // Register magnet scheme as default
+    CFStringRef bundleID = (__bridge CFStringRef)[[NSBundle mainBundle] bundleIdentifier];
+    OSStatus ret = LSSetDefaultHandlerForURLScheme(CFSTR("magnet"), bundleID);
+    return ret == noErr;
+}
+
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+    [[NSAppleEventManager sharedAppleEventManager]
+     setEventHandler:self
+     andSelector:@selector(handleURLEvent:withReplyEvent:)
+     forEventClass:kInternetEventClass
+     andEventID:kAEGetURL];
+    
+    [self initApp];
+}
+
+- (void)handleURLEvent:(NSAppleEventDescriptor*)event
+        withReplyEvent:(NSAppleEventDescriptor*)replyEvent
+{
+    NSString* url = [[event paramDescriptorForKeyword:keyDirectObject]
+                     stringValue];
+    NSLog(@"handle URL: %@", url);
+    [self initApp];
+    [self playTorrent:url];
 }
 
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
     NSLog(@"new file load: %@", filename);
+    [self initApp];
     [self playTorrent:filename];
     return YES;
 }
-
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
     [self.mpv quit];
