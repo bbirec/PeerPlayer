@@ -22,6 +22,7 @@
 @property double timePos; // in seconds
 @property double cacheDuration; // in seconds
 @property BOOL paused;
+@property double volume;
 
 @end
 
@@ -64,5 +65,6 @@
 -(void) quit;
 -(void) togglePause;
 -(void) seek:(int)seconds;
+-(void) volume:(double) vol;
 
 @end

@@ -211,6 +211,7 @@ static void wakeup(void *context) {
         mpv_observe_property(mpv, 0, "time-pos", MPV_FORMAT_DOUBLE);
         mpv_observe_property(mpv, 0, "demuxer-cache-duration", MPV_FORMAT_DOUBLE);
         mpv_observe_property(mpv, 0, "pause", MPV_FORMAT_FLAG);
+        mpv_observe_property(mpv, 0, "volume", MPV_FORMAT_DOUBLE);
         
         // Deal with MPV in the background.
         queue = dispatch_queue_create("mpv", DISPATCH_QUEUE_SERIAL);
@@ -262,31 +263,21 @@ static void wakeup(void *context) {
     });
 }
 
--(BOOL) processKey:(NSEvent*) event {
-    switch(event.keyCode) {
-        case 49:
-            // Toggle pause
-            [self togglePause];
-            return YES;
-        case 123:
-            // Seek -10
-            [self seek:-10];
-            return YES;
-        case 124:
-            // Seek 10
-            [self seek:10];
-            return YES;
-    }
-    
-    return NO;
-}
-
 -(void) seek:(int)seconds {
     dispatch_async(queue, ^{
         // Load the indicated file
         const char* sec = [[NSString stringWithFormat:@"%d", seconds] UTF8String];
         const char *cmd[] = {"seek", sec, NULL};
         check_error(mpv_command(mpv, cmd));
+    });
+}
+
+-(void) volume:(double) vol {
+    dispatch_async(queue, ^{
+        double v;
+        mpv_get_property(mpv, "volume", MPV_FORMAT_DOUBLE, &v);
+        v += vol;
+        mpv_set_property(mpv, "volume", MPV_FORMAT_DOUBLE, (void*)&v);
     });
 }
 
@@ -333,6 +324,11 @@ static void wakeup(void *context) {
         if (prop->format == MPV_FORMAT_DOUBLE) {
             self.info.cacheDuration = *(double *)prop->data;
             [self playInfoChanged];
+        }
+    }
+    else if(strcmp(prop->name, "volume") == 0) {
+        if (prop->format == MPV_FORMAT_DOUBLE) {
+            self.info.volume = *(double *)prop->data;
         }
     }
 }
