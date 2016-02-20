@@ -65,6 +65,7 @@
 -(void) quit;
 -(void) togglePause;
 -(void) seek:(int)seconds;
--(void) volume:(double) vol;
+-(void) volume:(double)vol;
+-(void) loadSubtitle:(NSString*)filepath;
 
 @end

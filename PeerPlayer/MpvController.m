@@ -107,10 +107,14 @@ static void glupdate(void *ctx);
         if([url hasPrefix:@"file:///.file/id="]) {
             NSString* filepath = [[NSURL URLFromPasteboard:pboard] path];
             
-            // Accept only .torrent file
-            if([[filepath pathExtension] isEqualToString:@"torrent"]) {
-                NSLog(@"filepath: %@", filepath);
+            NSString* ext = [filepath pathExtension];
+            if([ext isEqualToString:@"torrent"]) {
                 [delegate playTorrent:filepath];
+                return YES;
+            }
+            else if([ext isEqualToString:@"smi"] || [ext isEqualToString:@"srt"]) {
+                NSLog(@"Load subtitle: %@", filepath);
+                [[MpvController getInstance] loadSubtitle:filepath];
                 return YES;
             }
         }
@@ -278,6 +282,14 @@ static void wakeup(void *context) {
         mpv_get_property(mpv, "volume", MPV_FORMAT_DOUBLE, &v);
         v += vol;
         mpv_set_property(mpv, "volume", MPV_FORMAT_DOUBLE, (void*)&v);
+    });
+}
+
+-(void) loadSubtitle:(NSString*)filepath {
+    dispatch_async(queue, ^{
+        // Set subtitle
+        const char *cmd[] = {"sub-add", filepath.UTF8String, "select", NULL};
+        check_error(mpv_command(mpv, cmd));
     });
 }
 
