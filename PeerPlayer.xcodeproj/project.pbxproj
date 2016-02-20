@@ -224,7 +224,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "dylibbundler -od -b -x $BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH -d $BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/libs/ -p @executable_path/../libs/";
+			shellScript = "mkdir -p $BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/libs/\ndylibbundler $BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH $BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/libs/ @executable_path/../libs/";
 		};
 /* End PBXShellScriptBuildPhase section */
 
