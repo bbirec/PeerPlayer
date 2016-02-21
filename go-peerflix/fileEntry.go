@@ -17,11 +17,29 @@ type SeekableContent interface {
 type FileEntry struct {
 	*torrent.File
 	*torrent.Reader
+	N int64 // max bytes remaining
 }
 
 // Seek seeks to the correct file position, paying attention to the offset.
 func (f FileEntry) Seek(offset int64, whence int) (int64, error) {
-	return f.Reader.Seek(offset+f.File.Offset(), whence)
+	if whence == os.SEEK_END {
+		return f.Reader.Seek(offset+f.File.Offset()+f.File.Length(), os.SEEK_SET)
+	} else {
+		return f.Reader.Seek(offset+f.File.Offset(), whence)
+	}
+}
+
+// Copied from io.LimitReader
+func (f *FileEntry) Read(p []byte) (n int, err error) {
+	if f.N <= 0 {
+		return 0, io.EOF
+	}
+	if int64(len(p)) > f.N {
+		p = p[0:f.N]
+	}
+	n, err = f.Reader.Read(p)
+	f.N -= int64(n)
+	return
 }
 
 // NewFileReader sets up a torrent file for streaming reading.
@@ -37,5 +55,6 @@ func NewFileReader(f *torrent.File) (SeekableContent, error) {
 	return &FileEntry{
 		File:   f,
 		Reader: reader,
+		N:      f.Length(),
 	}, err
 }
