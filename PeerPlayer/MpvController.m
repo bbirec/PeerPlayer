@@ -9,6 +9,7 @@
 #import "MpvController.h"
 
 #import "AppDelegate.h"
+#import "MpvEvent.h"
 
 static inline void check_error(int status)
 {
@@ -216,6 +217,7 @@ static void wakeup(void *context) {
         mpv_observe_property(mpv, 0, "demuxer-cache-duration", MPV_FORMAT_DOUBLE);
         mpv_observe_property(mpv, 0, "pause", MPV_FORMAT_FLAG);
         mpv_observe_property(mpv, 0, "volume", MPV_FORMAT_DOUBLE);
+        mpv_observe_property(mpv, 0, "track-list", MPV_FORMAT_NODE);
         
         // Deal with MPV in the background.
         queue = dispatch_queue_create("mpv", DISPATCH_QUEUE_SERIAL);
@@ -311,37 +313,34 @@ static void wakeup(void *context) {
     [self performSelectorOnMainThread:@selector(_playInfoChanged) withObject:nil waitUntilDone:NO];
 }
 
+
 // Update the play info
 // This function may be called from mpv thread, so the functions manipulating UI functions should be performed on the main thread.
 -(void) updateInfo:(mpv_event_property*) prop {
     if (strcmp(prop->name, "time-pos") == 0) {
-        if (prop->format == MPV_FORMAT_DOUBLE) {
-            self.info.timePos = *(double *)prop->data;
-            [self playInfoChanged];
-        }
+        self.info.timePos = [[MpvEvent convertProperty:prop] doubleValue];
+        [self playInfoChanged];
+        
     }
     else if (strcmp(prop->name, "duration") == 0) {
-        if (prop->format == MPV_FORMAT_DOUBLE) {
-            self.info.duration = *(double *)prop->data;
-            [self playInfoChanged];
-        }
+        self.info.duration = [[MpvEvent convertProperty:prop] doubleValue];
+        [self playInfoChanged];
     }
     else if(strcmp(prop->name, "pause") == 0) {
-        if (prop->format == MPV_FORMAT_FLAG) {
-            self.info.paused = *(int *)prop->data;
-            [self playInfoChanged];
-        }
+        self.info.paused = [[MpvEvent convertProperty:prop] intValue];
+        [self playInfoChanged];
     }
     else if(strcmp(prop->name, "demuxer-cache-duration") == 0) {
-        if (prop->format == MPV_FORMAT_DOUBLE) {
-            self.info.cacheDuration = *(double *)prop->data;
-            [self playInfoChanged];
-        }
+        self.info.cacheDuration = [[MpvEvent convertProperty:prop] doubleValue];
+        [self playInfoChanged];
     }
     else if(strcmp(prop->name, "volume") == 0) {
-        if (prop->format == MPV_FORMAT_DOUBLE) {
-            self.info.volume = *(double *)prop->data;
-        }
+        self.info.volume = [[MpvEvent convertProperty:prop] doubleValue];
+        [self playInfoChanged];
+    }
+    else if(strcmp(prop->name, "track-list") == 0) {
+        id data = [MpvEvent convertProperty:prop];
+        NSLog(@"track list: %@", data);
     }
 }
 

@@ -18,6 +18,7 @@
 		CD724E261C6A35B100F931C0 /* Peerflix.m in Sources */ = {isa = PBXBuildFile; fileRef = CD724E251C6A35B100F931C0 /* Peerflix.m */; };
 		CD724E291C6AF27B00F931C0 /* PeerPlayer.icns in Resources */ = {isa = PBXBuildFile; fileRef = CD724E281C6AF27B00F931C0 /* PeerPlayer.icns */; };
 		CD791E7D1C69A3080098F7C3 /* MagnetOpenController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD791E7C1C69A3080098F7C3 /* MagnetOpenController.m */; };
+		CDC345191C79CB5C00687FBD /* MpvEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC345181C79CB5C00687FBD /* MpvEvent.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,8 @@
 		CD724E281C6AF27B00F931C0 /* PeerPlayer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = PeerPlayer.icns; sourceTree = "<group>"; };
 		CD791E7B1C69A3080098F7C3 /* MagnetOpenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MagnetOpenController.h; path = PeerPlayer/MagnetOpenController.h; sourceTree = "<group>"; };
 		CD791E7C1C69A3080098F7C3 /* MagnetOpenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MagnetOpenController.m; path = PeerPlayer/MagnetOpenController.m; sourceTree = "<group>"; };
+		CDC345171C79CB5C00687FBD /* MpvEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MpvEvent.h; sourceTree = "<group>"; };
+		CDC345181C79CB5C00687FBD /* MpvEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MpvEvent.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +107,8 @@
 			children = (
 				CD724E211C6A311000F931C0 /* MpvController.h */,
 				CD724E221C6A311000F931C0 /* MpvController.m */,
+				CDC345171C79CB5C00687FBD /* MpvEvent.h */,
+				CDC345181C79CB5C00687FBD /* MpvEvent.m */,
 			);
 			name = Player;
 			sourceTree = "<group>";
@@ -235,6 +240,7 @@
 			files = (
 				CD67EA3D1C6E54C20061BA00 /* ControlUI.m in Sources */,
 				CD724E261C6A35B100F931C0 /* Peerflix.m in Sources */,
+				CDC345191C79CB5C00687FBD /* MpvEvent.m in Sources */,
 				CD0C46281C67475D003910DF /* main.m in Sources */,
 				CD67EA401C6E58BF0061BA00 /* RootView.m in Sources */,
 				CD0C46251C67475D003910DF /* AppDelegate.m in Sources */,
