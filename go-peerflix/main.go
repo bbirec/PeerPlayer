@@ -102,16 +102,16 @@ func NewTorrent(torrentPath string, readyCallback unsafe.Pointer) {
 }
 
 //export GetStatus
-func GetStatus() string {
+func GetStatus() *C.char {
 	err, status := client.GetStatusJson()
 	if err != nil {
 		log.Println("Failed to get status json", err)
-		return "{}"
+		return nil
 	}
 
 	log.Printf("Status: %s\n", status)
 
-	return status
+    return C.CString(status)
 }
 
 func main() {

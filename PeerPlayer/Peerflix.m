@@ -53,8 +53,7 @@ void statusCb(char* status);
 }
 
 -(NSDictionary*) getStatus {
-    GoString str = GetStatus();
-    char* p = strndup(str.p, str.n);
+    char* p = GetStatus();
     NSString* statusJson = [NSString stringWithUTF8String:p];
     free(p);
     
