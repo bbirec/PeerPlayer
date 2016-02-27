@@ -184,8 +184,25 @@
 -(void) torrentMenuItemAction:(id) sender {
     NSDictionary* dict = [sender representedObject];
     NSString* hash = [dict objectForKey:@"Hash"];
+    NSString* filename = [dict objectForKey:@"Filename"];
     NSLog(@"Selected hash: %@", hash);
-    [self.mpv playWithUrl:[self.peerflix streamUrlFromHash:hash]];
+    
+    NSString* ext = [filename pathExtension];
+    if(self.mpv.info.loadFile && ([ext isEqualToString:@"smi"] || [ext isEqualToString:@"srt"])) {
+        // Load subtitle
+        NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:[self.peerflix streamUrlFromHash:hash]]];
+        
+        NSURL *fileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:filename]];
+        [data writeToURL:fileURL atomically:YES];
+        
+        [self.mpv loadSubtitle:fileURL.path];
+
+    }
+    else {
+        // Play file
+        [self.mpv playWithUrl:[self.peerflix streamUrlFromHash:hash]];
+    }
+    
 }
 
 

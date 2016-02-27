@@ -115,7 +115,8 @@ static void glupdate(void *ctx);
                 [delegate playTorrent:filepath];
                 return YES;
             }
-            else if([ext isEqualToString:@"smi"] || [ext isEqualToString:@"srt"]) {
+            else if([MpvController getInstance].info.loadFile &&
+                    ([ext isEqualToString:@"smi"] || [ext isEqualToString:@"srt"])) {
                 NSLog(@"Load subtitle: %@", filepath);
                 [[MpvController getInstance] loadSubtitle:filepath];
                 return YES;
