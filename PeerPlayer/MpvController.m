@@ -91,7 +91,7 @@ static void glupdate(void *ctx);
 {
     NSPasteboard *pboard = [sender draggingPasteboard];
     NSArray *types = [pboard types];
-    if ([types containsObject:NSURLPboardType])
+    if ([types containsObject:NSURLPboardType] || [types containsObject:NSFilenamesPboardType])
         return NSDragOperationCopy;
     else
         return NSDragOperationNone;
@@ -102,11 +102,13 @@ static void glupdate(void *ctx);
     AppDelegate* delegate = [[NSApplication sharedApplication] delegate];
     
     NSPasteboard *pboard = [sender draggingPasteboard];
+    NSLog(@"drag operation: %@", [pboard types]);
     if ([[pboard types] containsObject:NSURLPboardType]) {
-        NSString* url = [[NSURL URLFromPasteboard:pboard] absoluteString];
-        // Local file
-        if([url hasPrefix:@"file:///.file/id="]) {
-            NSString* filepath = [[NSURL URLFromPasteboard:pboard] path];
+        NSURL* u = [NSURL URLFromPasteboard:pboard];
+        NSString* url = [u absoluteString];
+        
+        if([u isFileURL]) {
+            NSString* filepath = u.path;
             
             NSString* ext = [filepath pathExtension];
             if([ext isEqualToString:@"torrent"]) {
