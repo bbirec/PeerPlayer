@@ -92,7 +92,6 @@ func (c *Client) NewTorrent(torrentPath string) (error, chan bool) {
 	go func() {
 		// Wait for the torrent info and start to download immediately
 		<-t.GotInfo()
-		t.DownloadAll()
 
 		c.Ready = true
 

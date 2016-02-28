@@ -44,6 +44,9 @@ func (f *FileEntry) Read(p []byte) (n int, err error) {
 
 // NewFileReader sets up a torrent file for streaming reading.
 func NewFileReader(f *torrent.File) (SeekableContent, error) {
+	// Start download
+	f.Download()
+
 	torrent := f.Torrent()
 	reader := torrent.NewReader()
 
