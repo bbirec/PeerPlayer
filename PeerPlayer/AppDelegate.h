@@ -30,6 +30,7 @@
 
 // Hold the files of current torrent.
 @property (strong) NSDictionary* currentFiles;
+@property (strong) NSDictionary* selectedFile;
 
 -(void) playTorrent:(NSString*)url;
 -(IBAction) openTorrentFile:(id)sender;

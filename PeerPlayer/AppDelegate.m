@@ -31,6 +31,20 @@
     }
 }
 
+-(void) updateTorrentMenuState {
+    NSString* hash = [self.selectedFile objectForKey:@"Hash"];
+    for(NSMenuItem* item in self.torrentMenu.itemArray) {
+        NSDictionary* d = item.representedObject;
+        if([[d objectForKey:@"Hash"] isEqualToString:hash]) {
+            [item setState:NSOnState];
+        }
+        else {
+            [item setState:NSOffState];
+        }
+        
+    }
+}
+
 #pragma mark Peerflix Delegate
 
 
@@ -40,6 +54,7 @@
     
     // Default action is playing the largest file.
     NSInteger maxSize = 0;
+    NSDictionary* targetFile;
     NSString* targetHash;
     NSString* filename;
     NSArray* files = [data objectForKey:@"Files"];
@@ -49,6 +64,7 @@
             maxSize = s;
             targetHash = [dict objectForKey:@"Hash"];
             filename = [dict objectForKey:@"Filename"];
+            targetFile = dict;
         }
     }
     
@@ -58,6 +74,8 @@
         NSString* url = [self.peerflix streamUrlFromHash:targetHash];
         NSLog(@"URL: %@", url);
         [self.mpv playWithUrl:url];
+        self.selectedFile = targetFile;
+        [self updateTorrentMenuState];
     }
     else {
         NSLog(@"Nothing to play");
@@ -200,6 +218,8 @@
     else {
         // Play file
         [self.mpv playWithUrl:[self.peerflix streamUrlFromHash:hash]];
+        self.selectedFile = dict;
+        [self updateTorrentMenuState];
     }
     
 }
