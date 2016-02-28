@@ -40,10 +40,9 @@ const (
 var client *Client
 
 //export Init
-func Init(statusCallback unsafe.Pointer) {
+func Init(downloadFolder *C.char, port int, statusCallback unsafe.Pointer) {
 	var err error
-	folder := os.TempDir()
-	port := 8000
+	folder := C.GoString(downloadFolder)
 	// Start up the torrent client.
 	client, err = NewClient(folder)
 	if err != nil {
@@ -111,12 +110,12 @@ func GetStatus() *C.char {
 
 	log.Printf("Status: %s\n", status)
 
-    return C.CString(status)
+	return C.CString(status)
 }
 
 func main() {
 	// Empty
-	Init(nil)
+	Init(C.CString(os.TempDir()), 8000, nil)
 	NewTorrent("/Users/bbirec/tmp/es.torrent", nil)
 	GetStatus()
 

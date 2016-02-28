@@ -20,8 +20,19 @@ void statusCb(char* status);
 -(void) initialize {
     _instance = self;
     
+    NSString* downloadFolder;
+    NSArray* urls = [[NSFileManager defaultManager] URLsForDirectory:NSDownloadsDirectory inDomains:NSUserDomainMask];
+    if([urls count] == 0) {
+        // Not found download folder.
+        NSAssert(true, @"Not found download folder");
+    }
+    else {
+        NSURL* url = [urls objectAtIndex:0];
+        downloadFolder = url.path;
+    }
+    
     // Initilize peerflix
-    Init(&statusCb);
+    Init((char*)[downloadFolder UTF8String], 8000, &statusCb);
 }
 
 -(NSDictionary*) parseStatus:(NSString*) statusJson {
