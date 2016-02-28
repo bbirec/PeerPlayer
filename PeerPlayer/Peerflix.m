@@ -32,7 +32,8 @@ void statusCb(char* status);
     }
     
     // Initilize peerflix
-    Init((char*)[downloadFolder UTF8String], 8000, &statusCb);
+    self.port = Init((char*)[downloadFolder UTF8String], &statusCb);
+    NSLog(@"Got port: %lld", self.port);
 }
 
 -(NSDictionary*) parseStatus:(NSString*) statusJson {
@@ -109,7 +110,7 @@ void statusCb(char* status) {
 }
 
 -(NSString*) streamUrlFromHash:(NSString*) hash {
-    return [NSString stringWithFormat:@"http://localhost:8000/?hash=%@", hash];
+    return [NSString stringWithFormat:@"http://localhost:%lld/?hash=%@", self.port, hash];
 }
 
 @end

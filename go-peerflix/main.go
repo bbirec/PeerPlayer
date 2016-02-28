@@ -20,9 +20,9 @@ import "C"
 import (
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 	"unsafe"
 
@@ -40,7 +40,7 @@ const (
 var client *Client
 
 //export Init
-func Init(downloadFolder *C.char, port int, statusCallback unsafe.Pointer) {
+func Init(downloadFolder *C.char, statusCallback unsafe.Pointer) int {
 	var err error
 	folder := C.GoString(downloadFolder)
 	// Start up the torrent client.
@@ -67,11 +67,21 @@ func Init(downloadFolder *C.char, port int, statusCallback unsafe.Pointer) {
 		}
 	}()
 
+	var port int
+	ln, err := net.Listen("tcp", ":0")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	addr := ln.Addr()
+	port = addr.(*net.TCPAddr).Port
+	log.Println("Listen:", port)
 	go func() {
-		log.Printf("Listening on port %d\n", port)
 		http.HandleFunc("/", client.GetFile)
-		log.Fatal(http.ListenAndServe(":"+strconv.Itoa(port), nil))
+		log.Fatal(http.Serve(ln, nil))
 	}()
+
+	return port
 }
 
 //export NewTorrent
@@ -115,7 +125,7 @@ func GetStatus() *C.char {
 
 func main() {
 	// Empty
-	Init(C.CString(os.TempDir()), 8000, nil)
+	Init(C.CString(os.TempDir()), nil)
 	NewTorrent("/Users/bbirec/tmp/es.torrent", nil)
 	GetStatus()
 

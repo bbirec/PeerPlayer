@@ -22,6 +22,7 @@
 @interface Peerflix : NSObject
 
 @property (strong) id<PeerflixDelegate> delegate;
+@property long long port;
 
 -(void) initialize;
 
