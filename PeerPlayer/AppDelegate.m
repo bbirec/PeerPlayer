@@ -45,7 +45,6 @@
     NSArray* files = [data objectForKey:@"Files"];
     for(NSDictionary* dict in files) {
         NSInteger s = [[dict objectForKey:@"Size"] longValue];
-        NSLog(@"size: %ld", s);
         if(maxSize < s) {
             maxSize = s;
             targetHash = [dict objectForKey:@"Hash"];

@@ -50,8 +50,8 @@ func NewFileReader(f *torrent.File) (SeekableContent, error) {
 	torrent := f.Torrent()
 	reader := torrent.NewReader()
 
-	// We read ahead 1% of the file continuously.
-	reader.SetReadahead(f.Length() / 100)
+	// Read ahead 10mb
+	reader.SetReadahead(1024 * 1024 * 10)
 	reader.SetResponsive()
 	_, err := reader.Seek(f.Offset(), os.SEEK_SET)
 
