@@ -158,6 +158,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CD0C46311C67475D003910DF /* Build configuration list for PBXNativeTarget "PeerPlayer" */;
 			buildPhases = (
+				CD4FE6451C8326CF00FC6456 /* ShellScript */,
 				CD0C461C1C67475D003910DF /* Sources */,
 				CD0C461D1C67475D003910DF /* Frameworks */,
 				CD0C461E1C67475D003910DF /* Resources */,
@@ -218,6 +219,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		CD4FE6451C8326CF00FC6456 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "source ~/.bash_profile\nexport PATH=$PATH:/usr/local/go/bin/\ncd go-peerflix\nmake\n";
+		};
 		CDC7FD981C71C1E20038C284 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
