@@ -20,13 +20,16 @@ type FileEntry struct {
 	N int64 // max bytes remaining
 }
 
-// Seek seeks to the correct file position, paying attention to the offset.
+// Emulating Seeker for each file entry.
 func (f FileEntry) Seek(offset int64, whence int) (int64, error) {
+	var off int64
+	var err error
 	if whence == os.SEEK_END {
-		return f.Reader.Seek(offset+f.File.Offset()+f.File.Length(), os.SEEK_SET)
+		off, err = f.Reader.Seek(f.File.Offset()+f.File.Length()+offset, os.SEEK_SET)
 	} else {
-		return f.Reader.Seek(offset+f.File.Offset(), whence)
+		off, err = f.Reader.Seek(f.File.Offset()+offset, whence)
 	}
+	return off - f.File.Offset(), err
 }
 
 // Copied from io.LimitReader

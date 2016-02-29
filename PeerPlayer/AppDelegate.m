@@ -206,13 +206,26 @@
     
     NSString* ext = [filename pathExtension];
     if(self.mpv.info.loadFile && ([ext isEqualToString:@"smi"] || [ext isEqualToString:@"srt"])) {
-        // Load subtitle
-        NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:[self.peerflix streamUrlFromHash:hash]]];
+        // Load subtitle asynchronously
+        NSURLSession * session = [NSURLSession sharedSession];
         
-        NSURL *fileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:filename]];
-        [data writeToURL:fileURL atomically:YES];
+        NSURL* url = [NSURL URLWithString:[self.peerflix streamUrlFromHash:hash]];
+        NSLog(@"Subtitle url: %@", url);
         
-        [self.mpv loadSubtitle:fileURL.path];
+        NSURLSessionDownloadTask * dataTask =
+        [session downloadTaskWithURL:url
+               completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error)
+         {
+             if(error != nil) {
+                 NSLog(@"Failed to load subtitle: %@", error);
+             }
+             else {
+                 NSLog(@"Temporary subtitle path: %@", location.path);
+                 [self.mpv loadSubtitle:location.path];
+             }
+         }];
+        
+        [dataTask resume];
 
     }
     else {
