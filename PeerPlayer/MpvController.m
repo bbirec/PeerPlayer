@@ -164,6 +164,28 @@ static void glupdate(void *ctx)
     self.glView = [[MpvClientOGLView alloc] initWithFrame:glFrame];
     [self.contentView addSubview:self.glView positioned:NSWindowBelow relativeTo:nil];
 }
+
+- (NSRect)frameRect:(NSRect)f forCenteredContentSize:(NSSize)ns
+{
+    NSRect cr  = [self contentRectForFrameRect:f];
+    CGFloat dx = (cr.size.width  - ns.width)  / 2;
+    CGFloat dy = (cr.size.height - ns.height) / 2;
+    return NSInsetRect(f, dx, dy);
+}
+
+-(void) setVideoSize:(NSSize) size {
+    self.contentAspectRatio = size;
+    
+    NSRect newFrame = [self frameRect:self.frame forCenteredContentSize:size];
+    [self setFrame:newFrame
+                  display:YES
+                  animate:YES];
+}
+
+-(void) clearVideoSize {
+    self.resizeIncrements = NSMakeSize(1.0, 1.0);
+}
+
 @end
 
 
@@ -221,6 +243,7 @@ static void wakeup(void *context) {
         mpv_observe_property(mpv, 0, "pause", MPV_FORMAT_FLAG);
         mpv_observe_property(mpv, 0, "volume", MPV_FORMAT_DOUBLE);
         mpv_observe_property(mpv, 0, "track-list", MPV_FORMAT_NODE);
+        mpv_observe_property(mpv, 0, "video-params", MPV_FORMAT_NODE);
         
         // Deal with MPV in the background.
         queue = dispatch_queue_create("mpv", DISPATCH_QUEUE_SERIAL);
@@ -316,6 +339,21 @@ static void wakeup(void *context) {
     [self performSelectorOnMainThread:@selector(_playInfoChanged) withObject:nil waitUntilDone:NO];
 }
 
+-(void) gotVideoParam:(NSDictionary*) videoParam {
+    NSNumber* w = [videoParam objectForKey:@"w"];
+    NSNumber* h = [videoParam objectForKey:@"h"];
+    if(w != nil && h != nil) {
+        NSLog(@"Video: w=%@, h=%@", w, h);
+        [self.window setVideoSize:NSMakeSize([w doubleValue], [h doubleValue])];
+    }
+    else {
+        [self.window clearVideoSize];
+    }
+}
+
+-(void) gotTrackList:(NSArray*) trackList {
+    NSLog(@"Track list: %@", trackList);
+}
 
 // Update the play info
 // This function may be called from mpv thread, so the functions manipulating UI functions should be performed on the main thread.
@@ -342,8 +380,12 @@ static void wakeup(void *context) {
         [self playInfoChanged];
     }
     else if(strcmp(prop->name, "track-list") == 0) {
-        id data = [MpvEvent convertProperty:prop];
-        NSLog(@"track list: %@", data);
+        NSArray* data = [MpvEvent convertProperty:prop];
+        [self performSelectorOnMainThread:@selector(gotTrackList:) withObject:data waitUntilDone:NO];
+    }
+    else if(strcmp(prop->name, "video-params") == 0) {
+        NSDictionary* data = [MpvEvent convertProperty:prop];
+        [self performSelectorOnMainThread:@selector(gotVideoParam:) withObject:data waitUntilDone:NO];
     }
 }
 
