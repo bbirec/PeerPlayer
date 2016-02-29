@@ -205,23 +205,34 @@
     NSLog(@"Selected hash: %@", hash);
     
     NSString* ext = [filename pathExtension];
-    if(self.mpv.info.loadFile && ([ext isEqualToString:@"smi"] || [ext isEqualToString:@"srt"])) {
+    if([ext isEqualToString:@"smi"] || [ext isEqualToString:@"srt"]) {
+        if(!self.mpv.info.loadFile) {
+            NSLog(@"Skip this subtitle. No playback is playing.");
+            return;
+        }
+        
         // Load subtitle asynchronously
         NSURLSession * session = [NSURLSession sharedSession];
         
         NSURL* url = [NSURL URLWithString:[self.peerflix streamUrlFromHash:hash]];
         NSLog(@"Subtitle url: %@", url);
         
-        NSURLSessionDownloadTask * dataTask =
-        [session downloadTaskWithURL:url
-               completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error)
+        NSURLSessionDataTask * dataTask =
+        [session dataTaskWithURL:url
+               completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
          {
              if(error != nil) {
                  NSLog(@"Failed to load subtitle: %@", error);
              }
              else {
-                 NSLog(@"Temporary subtitle path: %@", location.path);
-                 [self.mpv loadSubtitle:location.path];
+                 NSString* path = [NSTemporaryDirectory() stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
+                 NSLog(@"Temporary subtitle path: %@", path);
+                 if([data writeToFile:path atomically:YES]) {
+                     [self.mpv loadSubtitle:path];
+                 }
+                 else {
+                     NSLog(@"Failed to save subtitle: %@", error);
+                 }
              }
          }];
         
