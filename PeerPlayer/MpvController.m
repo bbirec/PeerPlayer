@@ -163,6 +163,9 @@ static void glupdate(void *ctx)
     NSRect glFrame = NSMakeRect(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
     self.glView = [[MpvClientOGLView alloc] initWithFrame:glFrame];
     [self.contentView addSubview:self.glView positioned:NSWindowBelow relativeTo:nil];
+    
+    // Accept the ouse move event to hide mouse cursor automatically
+    [self setAcceptsMouseMovedEvents:YES];
 }
 
 - (NSRect)frameRect:(NSRect)f forCenteredContentSize:(NSSize)ns

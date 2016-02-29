@@ -16,6 +16,13 @@
 
 -(void) awakeFromNib {
     [self setWantsLayer:YES];
+    
+    self.autoHideTimer = [NSTimer scheduledTimerWithTimeInterval:3.f
+                                                 target:self
+                                               selector:@selector(autoHideHUD)
+                                               userInfo:nil
+                                                repeats:YES];
+
 }
 
 -(void) keyDown:(NSEvent *)event
@@ -61,6 +68,19 @@
     }
 }
 
+-(void)mouseMoved:(NSEvent *)theEvent
+{
+    if(NSPointInRect([self convertPoint:[theEvent locationInWindow] fromView:nil], self.bounds)) {
+        // Prevent auto hide
+        self.shouldHide = NO;
+        [self showHUD];
+
+    }
+}
+
+-(BOOL) isFullscreen {
+    return (([self.window styleMask] & NSFullScreenWindowMask) == NSFullScreenWindowMask);
+}
 
 - (void)scrollWheel:(NSEvent *)theEvent {
     if([theEvent deltaY] < 0.0) {
@@ -70,6 +90,40 @@
     else if(0.0 < [theEvent deltaY]) {
         // Volume up
         [[MpvController getInstance] volume:10.f];
+    }
+}
+
+
+#pragma mark -
+#pragma mark Auto Hide
+
+-(void) autoHideHUD {
+    // Hide
+    if(![self isFullscreen]) {
+        return;
+    }
+    
+    if(self.shouldHide) {
+        [self hideHUD];
+    }
+
+    self.shouldHide = YES;
+}
+
+-(void) hideHUD {
+    if(!self.cursorHidden) {
+        [NSCursor hide];
+        self.cursorHidden = YES;
+    }
+}
+
+-(void) showHUD {
+    self.shouldHide = NO;
+    
+    if(self.cursorHidden) {
+        [NSCursor unhide];
+        self.cursorHidden = NO;
+        
     }
 }
 

@@ -7,7 +7,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "ControlUI.h"
 
 @interface RootView : NSView
+
+@property (strong) NSTimer* autoHideTimer;
+
+@property BOOL cursorHidden;
+@property BOOL shouldHide;
+
 
 @end
