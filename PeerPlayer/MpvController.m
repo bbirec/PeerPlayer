@@ -168,21 +168,26 @@ static void glupdate(void *ctx)
     [self setAcceptsMouseMovedEvents:YES];
 }
 
-- (NSRect)frameRect:(NSRect)f forCenteredContentSize:(NSSize)ns
-{
-    NSRect cr  = [self contentRectForFrameRect:f];
-    CGFloat dx = (cr.size.width  - ns.width)  / 2;
-    CGFloat dy = (cr.size.height - ns.height) / 2;
-    return NSInsetRect(f, dx, dy);
-}
-
 -(void) setVideoSize:(NSSize) size {
     self.contentAspectRatio = size;
     
-    NSRect newFrame = [self frameRect:self.frame forCenteredContentSize:size];
-    [self setFrame:newFrame
-                  display:YES
-                  animate:YES];
+    // Bound to visible screen frame
+    NSRect screenRect = [self.screen visibleFrame];
+    NSSize screenSize = screenRect.size;
+    
+    float scale = MIN(screenSize.width/size.width, screenSize.height/size.height);
+    
+    size.width *= scale;
+    size.height *= scale;
+    
+    float originX = self.frame.origin.x + (self.frame.size.width - size.width) / 2;
+    float originY = self.frame.origin.y + (self.frame.size.height - size.height) / 2;
+    
+    NSRect windowFrame = CGRectMake(MAX(originX, screenRect.origin.x),
+                                    MAX(originY, screenRect.origin.y),
+                                    size.width, size.height);
+    
+    [self setFrame:windowFrame display:YES animate:YES];
 }
 
 -(void) clearVideoSize {
