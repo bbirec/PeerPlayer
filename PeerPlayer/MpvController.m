@@ -192,6 +192,18 @@ static void glupdate(void *ctx)
 
 -(void) clearVideoSize {
     self.resizeIncrements = NSMakeSize(1.0, 1.0);
+    
+    // Restore to the default window size
+    NSSize size = NSMakeSize(640, 480);
+    NSRect frame = self.frame;
+    
+    float originX = frame.origin.x + (frame.size.width - size.width) / 2;
+    float originY = frame.origin.y + (frame.size.height - size.height) / 2;
+    
+    
+    [self setFrame:NSMakeRect(originX, originY, size.width, size.height)
+           display:YES
+           animate:YES];
 }
 
 @end
