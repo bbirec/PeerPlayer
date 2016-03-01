@@ -8,13 +8,14 @@
 
 #import <Cocoa/Cocoa.h>
 #import "AppDelegate.h"
+#import "OverlayTextView.h"
 
 @interface ControlUI : NSObject
 
 @property (strong) PlayInfo* playInfo;
 @property (strong) NSDictionary* torrentStatus;
 
-@property (weak) IBOutlet NSTextField* osd;
+@property (weak) IBOutlet OverlayTextView* osd;
 @property (weak) IBOutlet NSTextField* centerMsg;
 
 @end

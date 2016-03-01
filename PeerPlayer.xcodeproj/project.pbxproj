@@ -11,6 +11,7 @@
 		CD0C46281C67475D003910DF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0C46271C67475D003910DF /* main.m */; };
 		CD0C462A1C67475D003910DF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD0C46291C67475D003910DF /* Assets.xcassets */; };
 		CD0C462D1C67475D003910DF /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD0C462B1C67475D003910DF /* MainMenu.xib */; };
+		CD4FE6501C85C98700FC6456 /* OverlayTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4FE64F1C85C98700FC6456 /* OverlayTextView.m */; };
 		CD67EA3D1C6E54C20061BA00 /* ControlUI.m in Sources */ = {isa = PBXBuildFile; fileRef = CD67EA3C1C6E54C20061BA00 /* ControlUI.m */; };
 		CD67EA401C6E58BF0061BA00 /* RootView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD67EA3F1C6E58BF0061BA00 /* RootView.m */; };
 		CD67EA481C6FDC440061BA00 /* go-peerflix.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD67EA461C6FDC440061BA00 /* go-peerflix.a */; };
@@ -29,6 +30,8 @@
 		CD0C46291C67475D003910DF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CD0C462C1C67475D003910DF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		CD0C462E1C67475D003910DF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CD4FE64E1C85C98700FC6456 /* OverlayTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverlayTextView.h; sourceTree = "<group>"; };
+		CD4FE64F1C85C98700FC6456 /* OverlayTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OverlayTextView.m; sourceTree = "<group>"; };
 		CD67EA3B1C6E54C20061BA00 /* ControlUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ControlUI.h; path = PeerPlayer/ControlUI.h; sourceTree = "<group>"; };
 		CD67EA3C1C6E54C20061BA00 /* ControlUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ControlUI.m; path = PeerPlayer/ControlUI.m; sourceTree = "<group>"; };
 		CD67EA3E1C6E58BF0061BA00 /* RootView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootView.h; sourceTree = "<group>"; };
@@ -127,6 +130,8 @@
 			children = (
 				CD67EA3E1C6E58BF0061BA00 /* RootView.h */,
 				CD67EA3F1C6E58BF0061BA00 /* RootView.m */,
+				CD4FE64E1C85C98700FC6456 /* OverlayTextView.h */,
+				CD4FE64F1C85C98700FC6456 /* OverlayTextView.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -257,6 +262,7 @@
 				CDC345191C79CB5C00687FBD /* MpvEvent.m in Sources */,
 				CD0C46281C67475D003910DF /* main.m in Sources */,
 				CD67EA401C6E58BF0061BA00 /* RootView.m in Sources */,
+				CD4FE6501C85C98700FC6456 /* OverlayTextView.m in Sources */,
 				CD0C46251C67475D003910DF /* AppDelegate.m in Sources */,
 				CD791E7D1C69A3080098F7C3 /* MagnetOpenController.m in Sources */,
 				CD724E231C6A311000F931C0 /* MpvController.m in Sources */,

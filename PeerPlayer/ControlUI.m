@@ -62,7 +62,7 @@
             cache = @"";
         }
         
-        [self.osd setStringValue:
+        [self.osd setMsg:
          [NSString stringWithFormat:@"%@ %@/%@ %@",
           self.playInfo.paused ? @"Paused":@"Playing",
           [ControlUI formatTime:self.playInfo.timePos],
