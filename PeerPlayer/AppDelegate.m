@@ -12,9 +12,13 @@
 @implementation AppDelegate
 
 -(void) playTorrent:(NSString*) url {
-    [self.mpv stop];
-    self.currentFiles = nil;
-    [self.peerflix downloadTorrent:url];
+    // Make sure that downloading the torrent after intializing
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.mpv stop];
+        self.currentFiles = nil;
+        [self.peerflix downloadTorrent:url];
+    });
+    
 }
 
 -(void) updateTorrentMenu {
@@ -133,23 +137,24 @@
     
     // Init main window
     [self createWindow];
+    [self updateTorrentMenu];
+    
+    // Register magnet link if possible
+    if(![self registerMagnet]){
+        NSLog(@"Failed to associate the magnet url scheme as default.");
+    }
     
     // Initialize Mpv Controller.
     self.mpv = [[MpvController alloc] initWithWindow:self.window];
     self.mpv.delegate = self;
     
-    // Initialize Peerflix
-    self.peerflix = [[Peerflix alloc] init];
-    self.peerflix.delegate = self;
-    [self.peerflix initialize];
-    
-    [self updateTorrentMenu];
-    
-    // Register magnet link
-    if(![self registerMagnet]){
-        NSLog(@"Failed to associate the magnet url scheme as default.");
-    }
-    
+    // Avoid main thread blocking
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // Initialize Peerflix
+        self.peerflix = [[Peerflix alloc] init];
+        self.peerflix.delegate = self;
+        [self.peerflix initialize];
+    });
 }
 
 -(BOOL) registerMagnet {
