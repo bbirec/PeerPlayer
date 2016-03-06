@@ -54,6 +54,12 @@
         case 36:
             [self.window toggleFullScreen:self];
             break;
+        // Esc
+        case 53:
+            if([self isFullscreen]) {
+                [self.window toggleFullScreen:self];
+            }
+            break;
         default:
             break;
     }
