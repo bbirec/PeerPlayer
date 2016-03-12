@@ -12,7 +12,6 @@
 #import <mpv/opengl_cb.h>
 #import <IOKit/pwr_mgt/IOPMLib.h>
 
-
 @interface PlayInfo : NSObject
 
 @property BOOL startFile;
@@ -39,9 +38,17 @@
 - (void)initOGLView;
 @end
 
+typedef NS_ENUM(NSUInteger, PlayEndReason) {
+    kPlayEndUnknown = 0,
+    kPlayEndEOF,
+    kPlayEndStop,
+    kPlayEndQuit,
+    kPlayEndError,
+};
 
 @protocol PlayerDelegate <NSObject>
 -(void) playInfoChanged:(PlayInfo*) info;
+-(void) playEnded:(PlayEndReason)reason;
 @end
 
 

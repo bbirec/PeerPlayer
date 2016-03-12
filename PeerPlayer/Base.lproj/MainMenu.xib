@@ -13,7 +13,8 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
-                <outlet property="torrentMenu" destination="AW7-2I-wWd" id="Ihy-KI-bVv"/>
+                <outlet property="mediaMenu" destination="AW7-2I-wWd" id="dGS-ix-R2h"/>
+                <outlet property="subtitleMenu" destination="bXF-9B-kiq" id="WHS-GD-DZE"/>
                 <outlet property="window" destination="zzf-l0-hyd" id="pkp-2V-uQq"/>
             </connections>
         </customObject>
@@ -176,9 +177,13 @@
                         </items>
                     </menu>
                 </menuItem>
-                <menuItem title="Torrent" id="1yn-Ro-jE7">
+                <menuItem title="Media" id="1yn-Ro-jE7">
                     <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="Torrent" autoenablesItems="NO" id="AW7-2I-wWd"/>
+                    <menu key="submenu" title="Media" autoenablesItems="NO" id="AW7-2I-wWd"/>
+                </menuItem>
+                <menuItem title="Subtitle" id="SO0-3T-4nb">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Subtitle" id="bXF-9B-kiq"/>
                 </menuItem>
                 <menuItem title="Help" id="wpr-3q-Mcd">
                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -198,7 +203,7 @@
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="112" width="538" height="91"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
             <view key="contentView" id="2wF-T4-HlQ">
                 <rect key="frame" x="0.0" y="0.0" width="538" height="91"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -253,7 +258,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="207" width="640" height="480"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
             <view key="contentView" id="WLG-G9-FS0" customClass="RootView">
                 <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
                 <autoresizingMask key="autoresizingMask"/>

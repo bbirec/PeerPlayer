@@ -10,6 +10,7 @@
 
 #import "MpvController.h"
 #import "Peerflix.h"
+#import "Playlist.h"
 
 // Player
 #define kPPPlayInfoKey @"info"
@@ -23,14 +24,16 @@
 @property BOOL initialized;
 
 @property (weak) IBOutlet CocoaWindow *window;
-@property (weak) IBOutlet NSMenu* torrentMenu;
+@property (weak) IBOutlet NSMenu* mediaMenu;
+@property (weak) IBOutlet NSMenu* subtitleMenu;
 
 @property (strong) Peerflix* peerflix;
 @property (strong) MpvController* mpv;
 
 // Hold the files of current torrent.
-@property (strong) NSDictionary* currentFiles;
-@property (strong) NSDictionary* selectedFile;
+@property (strong) Playlist* playlist;
+@property (strong) File* selectedMedia;
+@property (strong) File* selectedSubtitle;
 
 -(void) playTorrent:(NSString*)url;
 -(IBAction) openTorrentFile:(id)sender;

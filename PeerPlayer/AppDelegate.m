@@ -8,78 +8,138 @@
 
 #import "AppDelegate.h"
 
-
 @implementation AppDelegate
 
 -(void) playTorrent:(NSString*) url {
     // Make sure that downloading the torrent after intializing
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.mpv stop];
-        self.currentFiles = nil;
+        self.playlist = nil;
         [self.peerflix downloadTorrent:url];
     });
     
 }
 
--(void) updateTorrentMenu {
-    [self.torrentMenu removeAllItems];
-    NSArray* files = [self.currentFiles objectForKey:@"Files"];
-    for(NSDictionary* dict in files) {
-        NSString* filename = [dict objectForKey:@"Filename"];
-        
-        NSMenuItem* item = [[NSMenuItem alloc] initWithTitle:filename
-                                                      action:@selector(torrentMenuItemAction:)
+-(void) playFile:(File*) file {
+    NSString* url = [self.peerflix streamUrlFromHash:file.fileHash];
+    NSLog(@"URL: %@", url);
+    [self.mpv playWithUrl:url];
+    self.selectedMedia = file;
+    [self updateMenuState];
+}
+
+#pragma Menu
+
+-(void) updateMenu {
+    [self.mediaMenu removeAllItems];
+    
+    for(File* f in self.playlist.mediaFiles) {
+        NSMenuItem* item = [[NSMenuItem alloc] initWithTitle:f.fileName
+                                                      action:@selector(mediaMenuItemAction:)
                                                keyEquivalent:@""];
-        item.representedObject = dict;
-        [self.torrentMenu addItem:item];
+        item.representedObject = f;
+        [self.mediaMenu addItem:item];
+    }
+
+    for(File* f in self.playlist.subFiles) {
+        NSMenuItem* item = [[NSMenuItem alloc] initWithTitle:f.fileName
+                                                      action:@selector(subtitleMenuItemAction:)
+                                               keyEquivalent:@""];
+        item.representedObject = f;
+        [self.subtitleMenu addItem:item];
     }
 }
 
--(void) updateTorrentMenuState {
-    NSString* hash = [self.selectedFile objectForKey:@"Hash"];
-    for(NSMenuItem* item in self.torrentMenu.itemArray) {
-        NSDictionary* d = item.representedObject;
-        if([[d objectForKey:@"Hash"] isEqualToString:hash]) {
+-(void) updateMenuState {
+    for(NSMenuItem* item in self.mediaMenu.itemArray) {
+        File* f = item.representedObject;
+        if([f.fileHash isEqualToString:self.selectedMedia.fileHash]) {
             [item setState:NSOnState];
         }
         else {
             [item setState:NSOffState];
         }
-        
     }
+    
+    
+    for(NSMenuItem* item in self.subtitleMenu.itemArray) {
+        File* f = item.representedObject;
+        if([f.fileHash isEqualToString:self.selectedSubtitle.fileHash]) {
+            [item setState:NSOnState];
+        }
+        else {
+            [item setState:NSOffState];
+        }
+    }
+}
+
+-(void) mediaMenuItemAction:(id) sender {
+    File* f = [sender representedObject];
+    [self playFile:f];
+}
+
+-(void) subtitleMenuItemAction:(id) sender {
+    File* f = [sender representedObject];
+    
+    if(!self.mpv.info.loadFile) {
+        NSLog(@"Skip this subtitle. No playback is playing.");
+        return;
+    }
+    
+    // Load subtitle asynchronously
+    NSURLSession * session = [NSURLSession sharedSession];
+    
+    NSURL* url = [NSURL URLWithString:[self.peerflix streamUrlFromHash:f.fileHash]];
+    NSLog(@"Subtitle url: %@", url);
+    
+    NSURLSessionDataTask * dataTask =
+    [session dataTaskWithURL:url
+           completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+     {
+         if(error != nil) {
+             NSLog(@"Failed to load subtitle: %@", error);
+         }
+         else {
+             NSString* path = [NSTemporaryDirectory() stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
+             NSLog(@"Temporary subtitle path: %@", path);
+             if([data writeToFile:path atomically:YES]) {
+                 [self.mpv loadSubtitle:path];
+                 self.selectedSubtitle = f;
+                 [self updateMenuState];
+             }
+             else {
+                 NSLog(@"Failed to save subtitle: %@", error);
+             }
+         }
+     }];
+    
+    [dataTask resume];
 }
 
 #pragma mark Peerflix Delegate
 
 
 -(void) torrentReady:(NSDictionary*)data {
-    self.currentFiles = data;
-    [self updateTorrentMenu];
-    
-    // Default action is playing the largest file.
-    NSInteger maxSize = 0;
-    NSDictionary* targetFile;
-    NSString* targetHash;
-    NSString* filename;
     NSArray* files = [data objectForKey:@"Files"];
+    
+    NSMutableArray<File*>* fileArr = [NSMutableArray array];
     for(NSDictionary* dict in files) {
-        NSInteger s = [[dict objectForKey:@"Size"] longValue];
-        if(maxSize < s) {
-            maxSize = s;
-            targetHash = [dict objectForKey:@"Hash"];
-            filename = [dict objectForKey:@"Filename"];
-            targetFile = dict;
-        }
+        File* f = [[File alloc] init];
+        f.fileName = [dict objectForKey:@"Filename"];
+        f.fileHash = [dict objectForKey:@"Hash"];
+        f.fileSize = [[dict objectForKey:@"Size"] longValue];
+        
+        [fileArr addObject:f];
     }
     
-    NSLog(@"Largest Filename: %@", filename);
     
-    if(targetHash != nil) {
-        NSString* url = [self.peerflix streamUrlFromHash:targetHash];
-        NSLog(@"URL: %@", url);
-        [self.mpv playWithUrl:url];
-        self.selectedFile = targetFile;
-        [self updateTorrentMenuState];
+    self.playlist = [Playlist playListFromFiles:fileArr];
+    [self updateMenu];
+    
+    // Start the first media in the playlist.
+    File* f = [self.playlist getNextMedia:nil];
+    if(f != nil) {
+        [self playFile:f];
     }
     else {
         NSLog(@"Nothing to play");
@@ -101,6 +161,17 @@
                                                         object:self
                                                       userInfo:[NSDictionary dictionaryWithObject:info forKey:kPPPlayInfoKey]];
 
+}
+
+-(void) playEnded:(PlayEndReason)reason {
+    NSLog(@"Play ended : %ld", reason);
+    if(reason == kPlayEndEOF) {
+        // Play the next media automatically.
+        File* next = [self.playlist getNextMedia:self.selectedMedia];
+        if(next != nil) {
+            [self playFile:next];
+        }
+    }
 }
 
 #pragma mark App Delegate
@@ -137,7 +208,7 @@
     
     // Init main window
     [self createWindow];
-    [self updateTorrentMenu];
+    [self updateMenu];
     
     // Register magnet link if possible
     if(![self registerMagnet]){
@@ -203,55 +274,6 @@
 #pragma mark IBActions
 
 
--(void) torrentMenuItemAction:(id) sender {
-    NSDictionary* dict = [sender representedObject];
-    NSString* hash = [dict objectForKey:@"Hash"];
-    NSString* filename = [dict objectForKey:@"Filename"];
-    NSLog(@"Selected hash: %@", hash);
-    
-    NSString* ext = [filename pathExtension];
-    if([ext isEqualToString:@"smi"] || [ext isEqualToString:@"srt"]) {
-        if(!self.mpv.info.loadFile) {
-            NSLog(@"Skip this subtitle. No playback is playing.");
-            return;
-        }
-        
-        // Load subtitle asynchronously
-        NSURLSession * session = [NSURLSession sharedSession];
-        
-        NSURL* url = [NSURL URLWithString:[self.peerflix streamUrlFromHash:hash]];
-        NSLog(@"Subtitle url: %@", url);
-        
-        NSURLSessionDataTask * dataTask =
-        [session dataTaskWithURL:url
-               completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-         {
-             if(error != nil) {
-                 NSLog(@"Failed to load subtitle: %@", error);
-             }
-             else {
-                 NSString* path = [NSTemporaryDirectory() stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
-                 NSLog(@"Temporary subtitle path: %@", path);
-                 if([data writeToFile:path atomically:YES]) {
-                     [self.mpv loadSubtitle:path];
-                 }
-                 else {
-                     NSLog(@"Failed to save subtitle: %@", error);
-                 }
-             }
-         }];
-        
-        [dataTask resume];
-
-    }
-    else {
-        // Play file
-        [self.mpv playWithUrl:[self.peerflix streamUrlFromHash:hash]];
-        self.selectedFile = dict;
-        [self updateTorrentMenuState];
-    }
-    
-}
 
 
 -(IBAction) openTorrentFile:(id)sender {

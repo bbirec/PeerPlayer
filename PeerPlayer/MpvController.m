@@ -451,6 +451,25 @@ static void wakeup(void *context) {
                     self.info.loadFile = NO;
                     [self playInfoChanged];
                     
+                    mpv_event_end_file* ef = (mpv_event_end_file*)event->data;
+                    switch(ef->reason){
+                        case MPV_END_FILE_REASON_EOF:
+                            [self.delegate playEnded:kPlayEndEOF];
+                            break;
+                        case MPV_END_FILE_REASON_STOP:
+                            [self.delegate playEnded:kPlayEndStop];
+                            break;
+                        case MPV_END_FILE_REASON_QUIT:
+                            [self.delegate playEnded:kPlayEndQuit];
+                            break;
+                        case MPV_END_FILE_REASON_ERROR:
+                            [self.delegate playEnded:kPlayEndError];
+                            break;
+                        default:
+                            [self.delegate playEnded:kPlayEndUnknown];
+                            break;
+                    }
+                    
                     // Enable power management
                     [self enablePowerManagement];
                     break;
