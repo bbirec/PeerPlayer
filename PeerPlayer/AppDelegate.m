@@ -25,7 +25,44 @@
     NSLog(@"URL: %@", url);
     [self.mpv playWithUrl:url];
     self.selectedMedia = file;
+    self.selectedSubtitle = nil;
     [self updateMenuState];
+}
+
+-(void) loadSubtitle:(File*) file {
+    if(!self.mpv.info.loadFile) {
+        NSLog(@"Skip this subtitle. No playback is playing.");
+        return;
+    }
+    
+    // Load subtitle asynchronously
+    NSURLSession * session = [NSURLSession sharedSession];
+    
+    NSURL* url = [NSURL URLWithString:[self.peerflix streamUrlFromHash:file.fileHash]];
+    NSLog(@"Subtitle url: %@", url);
+    
+    NSURLSessionDataTask * dataTask =
+    [session dataTaskWithURL:url
+           completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+     {
+         if(error != nil) {
+             NSLog(@"Failed to load subtitle: %@", error);
+         }
+         else {
+             NSString* path = [NSTemporaryDirectory() stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
+             NSLog(@"Temporary subtitle path: %@", path);
+             if([data writeToFile:path atomically:YES]) {
+                 [self.mpv loadSubtitle:path];
+                 self.selectedSubtitle = file;
+                 [self updateMenuState];
+             }
+             else {
+                 NSLog(@"Failed to save subtitle: %@", error);
+             }
+         }
+     }];
+    
+    [dataTask resume];
 }
 
 #pragma Menu
@@ -80,40 +117,7 @@
 
 -(void) subtitleMenuItemAction:(id) sender {
     File* f = [sender representedObject];
-    
-    if(!self.mpv.info.loadFile) {
-        NSLog(@"Skip this subtitle. No playback is playing.");
-        return;
-    }
-    
-    // Load subtitle asynchronously
-    NSURLSession * session = [NSURLSession sharedSession];
-    
-    NSURL* url = [NSURL URLWithString:[self.peerflix streamUrlFromHash:f.fileHash]];
-    NSLog(@"Subtitle url: %@", url);
-    
-    NSURLSessionDataTask * dataTask =
-    [session dataTaskWithURL:url
-           completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-     {
-         if(error != nil) {
-             NSLog(@"Failed to load subtitle: %@", error);
-         }
-         else {
-             NSString* path = [NSTemporaryDirectory() stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
-             NSLog(@"Temporary subtitle path: %@", path);
-             if([data writeToFile:path atomically:YES]) {
-                 [self.mpv loadSubtitle:path];
-                 self.selectedSubtitle = f;
-                 [self updateMenuState];
-             }
-             else {
-                 NSLog(@"Failed to save subtitle: %@", error);
-             }
-         }
-     }];
-    
-    [dataTask resume];
+    [self loadSubtitle:f];
 }
 
 #pragma mark Peerflix Delegate
@@ -161,6 +165,15 @@
                                                         object:self
                                                       userInfo:[NSDictionary dictionaryWithObject:info forKey:kPPPlayInfoKey]];
 
+}
+
+-(void) playStarted {
+    NSLog(@"Play started");
+    
+    File* f = [self.playlist getSubtitleForMedia:self.selectedMedia];
+    if(f != nil) {
+        [self loadSubtitle:f];
+    }
 }
 
 -(void) playEnded:(PlayEndReason)reason {
@@ -295,6 +308,9 @@
 
 -(IBAction) stopCurrentVideo:(id)sender {
     [self.mpv stop];
+    self.selectedMedia = nil;
+    self.selectedSubtitle = nil;
+    [self updateMenuState];
 }
 
 @end

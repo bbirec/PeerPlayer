@@ -48,6 +48,7 @@ typedef NS_ENUM(NSUInteger, PlayEndReason) {
 
 @protocol PlayerDelegate <NSObject>
 -(void) playInfoChanged:(PlayInfo*) info;
+-(void) playStarted;
 -(void) playEnded:(PlayEndReason)reason;
 @end
 

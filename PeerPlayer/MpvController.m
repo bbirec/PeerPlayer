@@ -478,6 +478,8 @@ static void wakeup(void *context) {
                     printf("event: %s\n", mpv_event_name(event->event_id));
                     self.info.loadFile = YES;
                     [self playInfoChanged];
+                    
+                    [self.delegate playStarted];
                     break;
                 }
                     

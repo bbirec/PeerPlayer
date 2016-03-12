@@ -26,5 +26,6 @@
 @property (strong) NSArray<File*>* subFiles;
 
 -(File*) getNextMedia:(File*) currentFile;
+-(File*) getSubtitleForMedia:(File*) mediaFile;
 
 @end

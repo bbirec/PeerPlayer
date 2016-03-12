@@ -74,4 +74,16 @@
     return nil;
 }
 
+-(File*) getSubtitleForMedia:(File*) mediaFile {
+    NSString* name = [[mediaFile.fileName stringByDeletingPathExtension] lowercaseString];
+    
+    for(File* f in self.subFiles) {
+        if([[[f.fileName stringByDeletingPathExtension] lowercaseString] isEqualToString:name]) {
+            return f;
+        }
+    }
+    
+    return nil;
+}
+
 @end
