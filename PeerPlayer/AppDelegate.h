@@ -23,7 +23,7 @@
 
 @property BOOL initialized;
 
-@property (weak) IBOutlet CocoaWindow *window;
+@property (weak) IBOutlet MpvWindow *window;
 @property (weak) IBOutlet NSMenu* mediaMenu;
 @property (weak) IBOutlet NSMenu* subtitleMenu;
 

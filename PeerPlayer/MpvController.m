@@ -149,10 +149,10 @@ static void glupdate(void *ctx)
     });
 }
 
-#pragma mark CocoaWindow
+#pragma mark MpvWindow
 
 
-@implementation CocoaWindow
+@implementation MpvWindow
 - (BOOL)canBecomeMainWindow { return YES; }
 
 - (BOOL)canBecomeKeyWindow { return YES; }
@@ -224,7 +224,7 @@ static void wakeup(void *context) {
     [a readEvents];
 }
 
--(id) initWithWindow:(CocoaWindow*) window {
+-(id) initWithWindow:(MpvWindow*) window {
     if (self = [super init]) {
         self.window = window;
         self.info = [[PlayInfo alloc] init];

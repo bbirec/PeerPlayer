@@ -33,7 +33,7 @@
 @end
 
 
-@interface CocoaWindow : NSWindow
+@interface MpvWindow : NSWindow
 @property(strong) MpvClientOGLView *glView;
 - (void)initOGLView;
 @end
@@ -60,13 +60,13 @@ typedef NS_ENUM(NSUInteger, PlayEndReason) {
     IOPMAssertionID nonSleepHandler;
 }
 
-@property (strong) CocoaWindow* window;
+@property (strong) MpvWindow* window;
 @property (strong) PlayInfo* info;
 @property (strong) id<PlayerDelegate> delegate;
 
 +(MpvController*) getInstance;
 
--(id) initWithWindow:(CocoaWindow*) window;
+-(id) initWithWindow:(MpvWindow*) window;
 
 -(void) playWithUrl:(NSString*) url;
 -(void) stop;
