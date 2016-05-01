@@ -54,6 +54,14 @@
         case 36:
             [self.window toggleFullScreen:self];
             break;
+        // z
+        case 6:
+            [[MpvController getInstance] subDelay:-0.1f];
+            break;
+        // x
+        case 7:
+            [[MpvController getInstance] subDelay:0.1f];
+            break;
         // Esc
         case 53:
             if([self isFullscreen]) {

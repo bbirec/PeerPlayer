@@ -23,6 +23,7 @@
 @property double cacheDuration; // in seconds
 @property BOOL paused;
 @property double volume;
+@property double subDelay;
 
 @end
 
@@ -69,5 +70,6 @@ typedef NS_ENUM(NSUInteger, PlayEndReason) {
 -(void) seek:(int)seconds;
 -(void) volume:(double)vol;
 -(void) loadSubtitle:(NSString*)filepath;
+-(void) subDelay:(double)delay;
 
 @end

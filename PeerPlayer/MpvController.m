@@ -160,6 +160,7 @@ static void wakeup(void *context) {
         mpv_observe_property(mpv, 0, "volume", MPV_FORMAT_DOUBLE);
         mpv_observe_property(mpv, 0, "track-list", MPV_FORMAT_NODE);
         mpv_observe_property(mpv, 0, "video-params", MPV_FORMAT_NODE);
+        mpv_observe_property(mpv, 0, "sub-delay", MPV_FORMAT_DOUBLE);
         
         // Deal with MPV in the background.
         queue = dispatch_queue_create("mpv", DISPATCH_QUEUE_SERIAL);
@@ -237,6 +238,15 @@ static void wakeup(void *context) {
     });
 }
 
+-(void) subDelay:(double)delay {
+    dispatch_async(queue, ^{
+        double d;
+        mpv_get_property(mpv, "sub-delay", MPV_FORMAT_DOUBLE, &d);
+        d += delay;
+        mpv_set_property(mpv, "sub-delay", MPV_FORMAT_DOUBLE, (void*)&d);
+    });
+}
+
 -(void) quit {
     mpv_opengl_cb_uninit_gl(self.window.glView.mpvGL);
     [self.window.glView clearGLContext];
@@ -303,6 +313,12 @@ static void wakeup(void *context) {
         NSDictionary* data = [MpvEvent convertProperty:prop];
         [self performSelectorOnMainThread:@selector(gotVideoParam:) withObject:data waitUntilDone:NO];
     }
+    else if(strcmp(prop->name, "sub-delay") == 0) {
+        self.info.subDelay = [[MpvEvent convertProperty:prop] doubleValue];
+        [self playInfoChanged];
+    }
+    
+
 }
 
 - (void) readEvents
