@@ -62,12 +62,21 @@
             cache = @"";
         }
         
+        NSString* subDelay;
+        if(self.playInfo.subDelay != 0) {
+            subDelay = [NSString stringWithFormat:@"(SUB %+.1fsec)", self.playInfo.subDelay];
+        }
+        else {
+            subDelay = @"";
+        }
+        
         [self.osd setMsg:
-         [NSString stringWithFormat:@"%@ %@/%@ %@",
+         [NSString stringWithFormat:@"%@ %@/%@ %@%@",
           self.playInfo.paused ? @"Paused":@"Playing",
           [ControlUI formatTime:self.playInfo.timePos],
           [ControlUI formatTime:self.playInfo.duration],
-          cache]];
+          cache,
+          subDelay]];
     }
     else {
         self.osd.hidden = YES;
