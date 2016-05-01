@@ -11,6 +11,7 @@
 #import <mpv/client.h>
 #import <mpv/opengl_cb.h>
 #import <IOKit/pwr_mgt/IOPMLib.h>
+#import "MpvClientOGLView.h"
 
 @interface PlayInfo : NSObject
 
@@ -23,13 +24,6 @@
 @property BOOL paused;
 @property double volume;
 
-@end
-
-@interface MpvClientOGLView : NSOpenGLView<NSDraggingDestination>
-@property mpv_opengl_cb_context *mpvGL;
-- (instancetype)initWithFrame:(NSRect)frame;
-- (void)drawRect;
-- (void)fillBlack;
 @end
 
 

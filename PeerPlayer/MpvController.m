@@ -9,6 +9,7 @@
 #import "MpvController.h"
 
 #import "AppDelegate.h"
+
 #import "MpvEvent.h"
 
 static inline void check_error(int status)
@@ -19,14 +20,6 @@ static inline void check_error(int status)
     }
 }
 
-#pragma mark Info
-
-@implementation PlayInfo
-
-@end
-
-#pragma mark OGLView
-
 static void *get_proc_address(void *ctx, const char *name)
 {
     CFStringRef symbolName = CFStringCreateWithCString(kCFAllocatorDefault, name, kCFStringEncodingASCII);
@@ -34,110 +27,6 @@ static void *get_proc_address(void *ctx, const char *name)
     CFRelease(symbolName);
     return addr;
 }
-
-static void glupdate(void *ctx);
-
-@implementation MpvClientOGLView
-- (instancetype)initWithFrame:(NSRect)frame
-{
-    // make sure the pixel format is double buffered so we can use
-    // [[self openGLContext] flushBuffer].
-    NSOpenGLPixelFormatAttribute attributes[] = {
-        NSOpenGLPFADoubleBuffer,
-        0
-    };
-    self = [super initWithFrame:frame
-                    pixelFormat:[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes]];
-    
-    if (self) {
-        [self setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-        // swap on vsyncs
-        GLint swapInt = 1;
-        [[self openGLContext] setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
-        [[self openGLContext] makeCurrentContext];
-        self.mpvGL = nil;
-        
-        // Drag & drop
-        [self registerForDraggedTypes:@[NSFilenamesPboardType,
-                                        NSURLPboardType]];
-    }
-    return self;
-}
-
-- (void)fillBlack
-{
-    glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT);
-}
-
-- (void)drawRect
-{
-    if (self.mpvGL){
-        mpv_opengl_cb_draw(self.mpvGL, 0, self.bounds.size.width, -self.bounds.size.height);
-    }
-    else{
-        [self fillBlack];
-    }
-    [[self openGLContext] flushBuffer];
-}
-
-- (void)drawRect:(NSRect)dirtyRect
-{
-    [self drawRect];
-}
-
-
-- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
-{
-    NSPasteboard *pboard = [sender draggingPasteboard];
-    NSArray *types = [pboard types];
-    if ([types containsObject:NSURLPboardType] || [types containsObject:NSFilenamesPboardType])
-        return NSDragOperationCopy;
-    else
-        return NSDragOperationNone;
-}
-
-- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
-{
-    AppDelegate* delegate = [[NSApplication sharedApplication] delegate];
-    
-    NSPasteboard *pboard = [sender draggingPasteboard];
-    NSLog(@"drag operation: %@", [pboard types]);
-    if ([[pboard types] containsObject:NSURLPboardType]) {
-        NSURL* u = [NSURL URLFromPasteboard:pboard];
-        NSString* url = [u absoluteString];
-        
-        if([u isFileURL]) {
-            NSString* filepath = u.path;
-            
-            NSString* ext = [filepath pathExtension];
-            if([ext isEqualToString:@"torrent"]) {
-                [delegate playTorrent:filepath];
-                return YES;
-            }
-            else if([MpvController getInstance].info.loadFile &&
-                    ([ext isEqualToString:@"smi"] || [ext isEqualToString:@"srt"])) {
-                NSLog(@"Load subtitle: %@", filepath);
-                [[MpvController getInstance] loadSubtitle:filepath];
-                return YES;
-            }
-        }
-        // Link
-        else if([url hasPrefix:@"magnet://"]){
-            NSLog(@"magnet: %@", url);
-            [delegate playTorrent:url];
-            return YES;
-        }
-    }
-    return NO;
-}
-
--(BOOL) mouseDownCanMoveWindow {
-    return YES;
-}
-
-@end
-
 
 static void glupdate(void *ctx)
 {
@@ -149,8 +38,15 @@ static void glupdate(void *ctx)
     });
 }
 
-#pragma mark MpvWindow
 
+#pragma mark Info
+
+@implementation PlayInfo
+
+@end
+
+
+#pragma mark MpvWindow
 
 @implementation MpvWindow
 - (BOOL)canBecomeMainWindow { return YES; }
