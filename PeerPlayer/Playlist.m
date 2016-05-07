@@ -16,6 +16,7 @@
         mediaExt = [NSSet setWithObjects:@"mkv", @"avi", @"mp4", @"ogv", @"webm",
                     @"rmvb", @"flv", @"wmv", @"vob", @"asf",
                     @"mpeg", @"mpg", @"m4v", @"3gp", @"mp3", @"ts",
+                    @"mov",
                     @"wav", @"ogv", @"flac", @"m4a", @"wma", nil];
     }
     

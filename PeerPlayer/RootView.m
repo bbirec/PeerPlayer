@@ -39,25 +39,25 @@
         // Left arrow
         case 123:
             if([event modifierFlags] & NSShiftKeyMask) {
-                [[MpvController getInstance] seek:-10];
+                [[MpvController getInstance] seek:-60];
             }
             else if([event modifierFlags] & NSCommandKeyMask) {
                 [delegate playPrev];
             }
             else {
-                [[MpvController getInstance] seek:-1];
+                [[MpvController getInstance] seek:-10];
             }
             break;
         // Right arrow
         case 124:
             if([event modifierFlags] & NSShiftKeyMask) {
-                [[MpvController getInstance] seek:10];
+                [[MpvController getInstance] seek:60];
             }
             else if([event modifierFlags] & NSCommandKeyMask) {
                 [delegate playNext];
             }
             else {
-                [[MpvController getInstance] seek:1];
+                [[MpvController getInstance] seek:10];
             }
             
             break;
