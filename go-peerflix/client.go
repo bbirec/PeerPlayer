@@ -67,7 +67,7 @@ func (c *Client) NewTorrent(torrentPath string) (error, chan bool) {
 
 	readyChan := make(chan bool)
 
-	var t torrent.Torrent
+	var t *torrent.Torrent
 	client := c.Client
 
 	// Add as magnet url.
@@ -114,7 +114,7 @@ func (c *Client) GetTorrent() (*torrent.Torrent, error) {
 	if len(ts) == 0 {
 		return nil, errors.New("There is no torrent")
 	}
-	return &ts[0], nil
+	return ts[0], nil
 }
 
 // Close cleans up the connections.
