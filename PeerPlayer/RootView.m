@@ -8,6 +8,7 @@
 
 #import "RootView.h"
 #import "MpvController.h"
+#import "AppDelegate.h"
 
 @implementation RootView
 
@@ -28,6 +29,7 @@
 -(void) keyDown:(NSEvent *)event
 {
     NSLog(@"keydown: %@", event);
+    AppDelegate* delegate = [[NSApplication sharedApplication] delegate];
     
     switch(event.keyCode) {
         // Space
@@ -39,6 +41,9 @@
             if([event modifierFlags] & NSShiftKeyMask) {
                 [[MpvController getInstance] seek:-10];
             }
+            else if([event modifierFlags] & NSCommandKeyMask) {
+                [delegate playPrev];
+            }
             else {
                 [[MpvController getInstance] seek:-1];
             }
@@ -47,6 +52,9 @@
         case 124:
             if([event modifierFlags] & NSShiftKeyMask) {
                 [[MpvController getInstance] seek:10];
+            }
+            else if([event modifierFlags] & NSCommandKeyMask) {
+                [delegate playNext];
             }
             else {
                 [[MpvController getInstance] seek:1];

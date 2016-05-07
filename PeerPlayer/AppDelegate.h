@@ -38,5 +38,12 @@
 -(void) playTorrent:(NSString*)url;
 -(IBAction) openTorrentFile:(id)sender;
 -(IBAction) stopCurrentVideo:(id)sender;
+
+
+-(BOOL) hasPrev;
+-(BOOL) hasNext;
+-(void) playPrev;
+-(void) playNext;
+
 @end
 

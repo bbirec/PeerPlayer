@@ -61,6 +61,28 @@
     return instance;
 }
 
+-(File*) getFirstMedia {
+    return [self.mediaFiles firstObject];
+}
+
+-(File*) getPrevMedia:(File*) currentFile {
+    if(currentFile == nil) {
+        return [self.mediaFiles firstObject];
+    }
+    else {
+        NSUInteger idx = [self.mediaFiles indexOfObject:currentFile];
+        if(idx == NSNotFound) {
+            return nil;
+        }
+        else if(idx == 0) {
+            return nil;
+        }
+        else {
+            return [self.mediaFiles objectAtIndex:idx-1];
+        }
+    }
+}
+
 -(File*) getNextMedia:(File*) currentFile {
     // Return the first file
     if(currentFile == nil) {
@@ -68,10 +90,16 @@
     }
     
     NSUInteger idx = [self.mediaFiles indexOfObject:currentFile];
-    if(idx + 1 < [self.mediaFiles count]) {
+    if(idx == NSNotFound) {
+        return nil;
+    }
+    else if(idx + 1 == [self.mediaFiles count]) {
+        return nil;
+        
+    }
+    else {
         return [self.mediaFiles objectAtIndex:idx+1];
     }
-    return nil;
 }
 
 -(File*) getSubtitleForMedia:(File*) mediaFile {

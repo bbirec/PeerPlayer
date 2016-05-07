@@ -65,6 +65,29 @@
     [dataTask resume];
 }
 
+-(BOOL) hasPrev {
+    return [self.playlist getPrevMedia:self.selectedMedia] != nil;
+}
+
+-(BOOL) hasNext {
+    return [self.playlist getNextMedia:self.selectedMedia] != nil;
+}
+
+
+-(void) playPrev {
+    File* next = [self.playlist getPrevMedia:self.selectedMedia];
+    if(next != nil) {
+        [self playFile:next];
+    }
+}
+
+-(void) playNext {
+    File* next = [self.playlist getNextMedia:self.selectedMedia];
+    if(next != nil) {
+        [self playFile:next];
+    }
+}
+
 #pragma Menu
 
 -(void) updateMenu {
@@ -141,7 +164,7 @@
     [self updateMenu];
     
     // Start the first media in the playlist.
-    File* f = [self.playlist getNextMedia:nil];
+    File* f = [self.playlist getFirstMedia];
     if(f != nil) {
         [self playFile:f];
     }
@@ -180,10 +203,7 @@
     NSLog(@"Play ended : %ld", reason);
     if(reason == kPlayEndEOF) {
         // Play the next media automatically.
-        File* next = [self.playlist getNextMedia:self.selectedMedia];
-        if(next != nil) {
-            [self playFile:next];
-        }
+        [self playNext];
     }
 }
 
