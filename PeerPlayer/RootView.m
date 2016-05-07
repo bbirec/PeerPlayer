@@ -36,11 +36,22 @@
             break;
         // Left arrow
         case 123:
-            [[MpvController getInstance] seek:-10];
+            if([event modifierFlags] & NSShiftKeyMask) {
+                [[MpvController getInstance] seek:-10];
+            }
+            else {
+                [[MpvController getInstance] seek:-1];
+            }
             break;
         // Right arrow
         case 124:
-            [[MpvController getInstance] seek:10];
+            if([event modifierFlags] & NSShiftKeyMask) {
+                [[MpvController getInstance] seek:10];
+            }
+            else {
+                [[MpvController getInstance] seek:1];
+            }
+            
             break;
         // Up arrow
         case 126:
