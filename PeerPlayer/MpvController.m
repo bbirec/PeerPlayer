@@ -247,6 +247,16 @@ static void wakeup(void *context) {
     });
 }
 
+-(void) rotate {
+    dispatch_async(queue, ^{
+        int a;
+        mpv_get_property(mpv, "video-rotate", MPV_FORMAT_INT64, &a);
+        a += 90;
+        a = a % 360;
+        mpv_set_property(mpv, "video-rotate", MPV_FORMAT_INT64, (void*)&a);
+    });
+}
+
 -(void) quit {
     mpv_opengl_cb_uninit_gl(self.window.glView.mpvGL);
     [self.window.glView clearGLContext];

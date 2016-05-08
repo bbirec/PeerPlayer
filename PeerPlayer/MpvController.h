@@ -71,5 +71,6 @@ typedef NS_ENUM(NSUInteger, PlayEndReason) {
 -(void) volume:(double)vol;
 -(void) loadSubtitle:(NSString*)filepath;
 -(void) subDelay:(double)delay;
+-(void) rotate;
 
 @end

@@ -373,4 +373,8 @@
     [self.mpv volume:-10.f];
 }
 
+-(IBAction) rotate:(id)sender {
+    [self.mpv rotate];
+}
+
 @end
