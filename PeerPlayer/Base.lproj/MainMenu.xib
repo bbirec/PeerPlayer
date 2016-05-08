@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="14F1605" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="14F1713" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
     </dependencies>
@@ -177,6 +177,77 @@
                         </items>
                     </menu>
                 </menuItem>
+                <menuItem title="Playback" id="z2x-hF-EOP">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Playback" id="uaJ-aM-DwY">
+                        <items>
+                            <menuItem title="Step Forward" keyEquivalent="" id="2Rr-3v-Hud">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="stepForward:" target="Voe-Tx-rLC" id="99T-9l-PcP"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Step Backward" keyEquivalent="" id="xTM-2Z-7Xx">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="stepBackward:" target="Voe-Tx-rLC" id="FUa-mG-5Pp"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Jump Forward" keyEquivalent="" id="KkA-EB-Dcy">
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                <connections>
+                                    <action selector="jumpForward:" target="Voe-Tx-rLC" id="CkP-v8-OVH"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Jump Backward" keyEquivalent="" id="IZq-yP-Q24">
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                <connections>
+                                    <action selector="jumpBackward:" target="Voe-Tx-rLC" id="0CO-TJ-gec"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="RVB-Xv-ImL"/>
+                            <menuItem title="Next" keyEquivalent="" id="OdQ-xU-W8V">
+                                <connections>
+                                    <action selector="nextMedia:" target="Voe-Tx-rLC" id="Ihn-c1-Zwh"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Prev" keyEquivalent="" id="xBe-hg-rIt">
+                                <connections>
+                                    <action selector="prevMedia:" target="Voe-Tx-rLC" id="dgE-AR-0Ec"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="20R-n7-if6"/>
+                            <menuItem title="Volume Up" keyEquivalent="" id="tjw-kJ-5h9">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="volumeUp:" target="Voe-Tx-rLC" id="HRX-cS-G3n"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Volume Down" keyEquivalent="" id="lwR-Xv-QpY">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="volumeDown:" target="Voe-Tx-rLC" id="zyG-DW-DF5"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="acx-gz-f8z"/>
+                            <menuItem title="Sub Delay Up" keyEquivalent="" id="5fO-lY-O9A">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                <connections>
+                                    <action selector="subDelayUp:" target="Voe-Tx-rLC" id="cyR-RS-EKB"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Sub Delay Down" keyEquivalent="" id="fTI-K1-CNm">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                <connections>
+                                    <action selector="subDelayDown:" target="Voe-Tx-rLC" id="TJi-xb-u4j"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                        <connections>
+                            <outlet property="delegate" destination="Voe-Tx-rLC" id="Ns6-6t-ycG"/>
+                        </connections>
+                    </menu>
+                </menuItem>
                 <menuItem title="Media" id="1yn-Ro-jE7">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Media" autoenablesItems="NO" id="AW7-2I-wWd"/>
@@ -203,7 +274,7 @@
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="112" width="538" height="91"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
             <view key="contentView" id="2wF-T4-HlQ">
                 <rect key="frame" x="0.0" y="0.0" width="538" height="91"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -258,7 +329,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="207" width="640" height="480"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
             <view key="contentView" id="WLG-G9-FS0" customClass="RootView">
                 <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -282,5 +353,8 @@ Gw
             </view>
             <point key="canvasLocation" x="600" y="1121"/>
         </window>
+        <menuItem title="Item" id="yGT-hV-wrG">
+            <modifierMask key="keyEquivalentModifierMask"/>
+        </menuItem>
     </objects>
 </document>

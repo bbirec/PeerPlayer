@@ -8,7 +8,6 @@
 
 #import "RootView.h"
 #import "MpvController.h"
-#import "AppDelegate.h"
 
 @implementation RootView
 
@@ -28,58 +27,14 @@
 
 -(void) keyDown:(NSEvent *)event
 {
-    NSLog(@"keydown: %@", event);
-    AppDelegate* delegate = [[NSApplication sharedApplication] delegate];
-    
     switch(event.keyCode) {
         // Space
         case 49:
             [[MpvController getInstance] togglePause];
             break;
-        // Left arrow
-        case 123:
-            if([event modifierFlags] & NSShiftKeyMask) {
-                [[MpvController getInstance] seek:-60];
-            }
-            else if([event modifierFlags] & NSCommandKeyMask) {
-                [delegate playPrev];
-            }
-            else {
-                [[MpvController getInstance] seek:-10];
-            }
-            break;
-        // Right arrow
-        case 124:
-            if([event modifierFlags] & NSShiftKeyMask) {
-                [[MpvController getInstance] seek:60];
-            }
-            else if([event modifierFlags] & NSCommandKeyMask) {
-                [delegate playNext];
-            }
-            else {
-                [[MpvController getInstance] seek:10];
-            }
-            
-            break;
-        // Up arrow
-        case 126:
-            [[MpvController getInstance] volume:10.f];
-            break;
-        // Down arrow
-        case 125:
-            [[MpvController getInstance] volume:-10.f];
-            break;
         // Enter
         case 36:
             [self.window toggleFullScreen:self];
-            break;
-        // z
-        case 6:
-            [[MpvController getInstance] subDelay:-0.1f];
-            break;
-        // x
-        case 7:
-            [[MpvController getInstance] subDelay:0.1f];
             break;
         // Esc
         case 53:

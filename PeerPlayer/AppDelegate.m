@@ -333,4 +333,44 @@
     [self updateMenuState];
 }
 
+-(IBAction) stepForward:(id)sender {
+    [self.mpv seek:10];
+}
+
+-(IBAction) stepBackward:(id)sender {
+    [self.mpv seek:-10];
+}
+
+-(IBAction) jumpForward:(id)sender {
+    [[MpvController getInstance] seek:60];
+}
+
+-(IBAction) jumpBackward:(id)sender {
+    [[MpvController getInstance] seek:-60];
+}
+
+-(IBAction) prevMedia:(id)sender {
+    [self playPrev];
+}
+
+-(IBAction) nextMedia:(id)sender {
+    [self playNext];
+}
+
+-(IBAction) subDelayUp:(id)sender {
+    [self.mpv subDelay:0.1f];
+}
+
+-(IBAction) subDelayDown:(id)sender {
+    [self.mpv subDelay:-0.1f];
+}
+
+-(IBAction) volumeUp:(id)sender {
+    [self.mpv volume:10.f];
+}
+
+-(IBAction) volumeDown:(id)sender {
+    [self.mpv volume:-10.f];
+}
+
 @end
