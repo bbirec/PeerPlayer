@@ -213,12 +213,15 @@ static void wakeup(void *context) {
 }
 
 -(void) seek:(int)seconds {
-    dispatch_async(queue, ^{
-        // Load the indicated file
-        const char* sec = [[NSString stringWithFormat:@"%d", seconds] UTF8String];
-        const char *cmd[] = {"seek", sec, NULL};
-        check_error(mpv_command(mpv, cmd));
-    });
+    if(self.info.startFile && self.info.loadFile) {
+        dispatch_async(queue, ^{
+            // Load the indicated file
+            const char* sec = [[NSString stringWithFormat:@"%d", seconds] UTF8String];
+            const char *cmd[] = {"seek", sec, NULL};
+            check_error(mpv_command(mpv, cmd));
+        });
+    }
+    
 }
 
 -(void) volume:(double) vol {
